@@ -22,20 +22,20 @@ This game plan outlines the implementation of a new tool called `get_prompt_chan
 - Template content should include sections for task description, agency instructions, and maxims of action
 - Variables should include `change_request` and `specific_instructions`
 
-### Stage 2: Implement the server-side function
+### Stage 2: Implement the server-side function ✅
 
-- [ ] Add a new async function `get_prompt_change` to handle the tool
-- [ ] Ensure it follows the same pattern as existing prompt functions
+- [x] Add a new async function `get_prompt_change` to handle the tool
+- [x] Ensure it follows the same pattern as existing prompt functions
 
 **Implementation Details:**
 - Add function `get_prompt_change` to `server.py` with parameters for change_request, specific_instructions, and version
 - Function should call `render_prompt_template` with appropriate parameters
 - Add proper docstring and type hints
 
-### Stage 3: Register the tool
+### Stage 3: Register the tool ✅
 
-- [ ] Add the tool to the list of available tools in the `list_tools` function
-- [ ] Add handling for the tool in the `fetch_tool` function
+- [x] Add the tool to the list of available tools in the `list_tools` function
+- [x] Add handling for the tool in the `fetch_tool` function
 
 **Implementation Details:**
 - Add new `types.Tool` entry in the `list_tools` function with appropriate name, description, and input schema

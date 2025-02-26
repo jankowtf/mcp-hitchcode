@@ -262,6 +262,32 @@ async def get_prompt_fix(
     return [types.TextContent(type="text", text=response_text)]
 
 
+async def get_prompt_change(
+    change_request: str,
+    specific_instructions: str = "",
+    version: str = "latest",
+) -> list[types.TextContent]:
+    """
+    Provides a prompt for systematically handling change requests.
+
+    Args:
+        change_request: Description of the change request to implement.
+        specific_instructions: Optional specific instructions to include in the prompt.
+        version: The version of the prompt template to use. Defaults to "latest".
+
+    Returns:
+        A list containing a TextContent object with the prompt.
+    """
+    # Render the prompt template with the change request and specific instructions
+    response_text = render_prompt_template(
+        "change_prompt",
+        version_str=version,
+        change_request=change_request,
+        specific_instructions=specific_instructions,
+    )
+    return [types.TextContent(type="text", text=response_text)]
+
+
 @click.command()
 @click.option("--port", default=8000, help="Port to listen on for SSE")
 @click.option(
@@ -345,6 +371,21 @@ def main(port: int, transport: str) -> int:
             specific_instructions = arguments.get("specific_instructions", "")
             return await get_prompt_proceed(
                 arguments["task"],
+                specific_instructions=specific_instructions,
+                version=version,
+            )
+        elif name == "get_prompt_change":
+            if "change_request" not in arguments:
+                return [
+                    types.TextContent(
+                        type="text",
+                        text="Error: Missing required argument 'change_request'",
+                    )
+                ]
+            version = arguments.get("version", "latest")
+            specific_instructions = arguments.get("specific_instructions", "")
+            return await get_prompt_change(
+                change_request=arguments["change_request"],
                 specific_instructions=specific_instructions,
                 version=version,
             )
@@ -462,6 +503,28 @@ def main(port: int, transport: str) -> int:
                         "task": {
                             "type": "string",
                             "description": "A description of the task or project to proceed with",
+                        },
+                        "specific_instructions": {
+                            "type": "string",
+                            "description": "Optional specific instructions to include in the prompt",
+                        },
+                        "version": {
+                            "type": "string",
+                            "description": "The version of the prompt template to use (e.g., '1.0.0', '1.1.0', or 'latest')",
+                        },
+                    },
+                },
+            ),
+            types.Tool(
+                name="get_prompt_change",
+                description="Provides a prompt for systematically handling change requests",
+                inputSchema={
+                    "type": "object",
+                    "required": ["change_request"],
+                    "properties": {
+                        "change_request": {
+                            "type": "string",
+                            "description": "Description of the change request to implement",
                         },
                         "specific_instructions": {
                             "type": "string",
