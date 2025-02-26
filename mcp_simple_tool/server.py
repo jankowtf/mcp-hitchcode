@@ -226,6 +226,27 @@ async def get_prompt_fix(
     return [types.TextContent(type="text", text=response_text)]
 
 
+async def get_prompt_proceed(
+    task: str,
+    version: str = "latest",
+) -> list[types.TextContent]:
+    """
+    Provides a prompt template for proceeding with a task or project.
+
+    Args:
+        task: A description of the task or project to proceed with.
+        version: The version of the prompt template to use. Defaults to "latest".
+
+    Returns:
+        A list containing a TextContent object with the prompt.
+    """
+    # Render the prompt template with the task description
+    response_text = render_prompt_template(
+        "proceed_prompt", version_str=version, task=task
+    )
+    return [types.TextContent(type="text", text=response_text)]
+
+
 @click.command()
 @click.option("--port", default=8000, help="Port to listen on for SSE")
 @click.option(
@@ -288,6 +309,15 @@ def main(port: int, transport: str) -> int:
                 ]
             version = arguments.get("version", "latest")
             return await get_prompt_initial(arguments["project"], version=version)
+        elif name == "get_prompt_proceed":
+            if "task" not in arguments:
+                return [
+                    types.TextContent(
+                        type="text", text="Error: Missing required argument 'task'"
+                    )
+                ]
+            version = arguments.get("version", "latest")
+            return await get_prompt_proceed(arguments["task"], version=version)
         else:
             return [types.TextContent(type="text", text=f"Error: Unknown tool: {name}")]
 
@@ -376,6 +406,24 @@ def main(port: int, transport: str) -> int:
                         "project": {
                             "type": "string",
                             "description": "A description of the project to start",
+                        },
+                        "version": {
+                            "type": "string",
+                            "description": "The version of the prompt template to use (e.g., '1.0.0', '1.1.0', or 'latest')",
+                        },
+                    },
+                },
+            ),
+            types.Tool(
+                name="get_prompt_proceed",
+                description="Provides a prompt template for proceeding with a task or project",
+                inputSchema={
+                    "type": "object",
+                    "required": ["task"],
+                    "properties": {
+                        "task": {
+                            "type": "string",
+                            "description": "A description of the task or project to proceed with",
                         },
                         "version": {
                             "type": "string",
