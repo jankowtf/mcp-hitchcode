@@ -2,7 +2,15 @@ import anyio
 import click
 import httpx
 import mcp.types as types
+from bs4 import BeautifulSoup
 from mcp.server.lowlevel import Server
+from starlette.applications import Starlette
+from starlette.responses import JSONResponse
+from starlette.routing import Mount, Route
+
+
+def serialize_content(content_list):
+    return [{"type": content.type, "text": content.text} for content in content_list]
 
 
 async def fetch_website(
@@ -14,29 +22,34 @@ async def fetch_website(
     try:
         timeout = httpx.Timeout(10.0, connect=5.0)
         async with httpx.AsyncClient(
-            follow_redirects=True, 
-            headers=headers,
-            timeout=timeout
+            follow_redirects=True, headers=headers, timeout=timeout
         ) as client:
             response = await client.get(url)
             response.raise_for_status()
             return [types.TextContent(type="text", text=response.text)]
     except httpx.TimeoutException:
-        return [types.TextContent(
-            type="text",
-            text="Error: Request timed out while trying to fetch the website."
-        )]
+        return [
+            types.TextContent(
+                type="text",
+                text="Error: Request timed out while trying to fetch the website.",
+            )
+        ]
     except httpx.HTTPStatusError as e:
-        return [types.TextContent(
-            type="text",
-            text=(f"Error: HTTP {e.response.status_code} "
-                  "error while fetching the website.")
-        )]
+        return [
+            types.TextContent(
+                type="text",
+                text=(
+                    f"Error: HTTP {e.response.status_code} "
+                    "error while fetching the website."
+                ),
+            )
+        ]
     except Exception as e:
-        return [types.TextContent(
-            type="text",
-            text=f"Error: Failed to fetch website: {str(e)}"
-        )]
+        return [
+            types.TextContent(
+                type="text", text=f"Error: Failed to fetch website: {str(e)}"
+            )
+        ]
 
 
 async def check_mood(
@@ -45,6 +58,169 @@ async def check_mood(
     """Check server's mood - always responds cheerfully with a heart."""
     msg: str = "I'm feeling great and happy to help you! ❤️"
     return [types.TextContent(type="text", text=msg)]
+
+
+async def fetch_railway_docs(
+    url: str = "https://docs.railway.app/guides/cli",
+) -> list[types.TextContent]:
+    """
+    Fetch the most recent Railway CLI documentation.
+    """
+    headers = {
+        "User-Agent": "MCP Railway Docs Fetcher (github.com/modelcontextprotocol/python-sdk)"
+    }
+
+    try:
+        timeout = httpx.Timeout(10.0, connect=5.0)
+        async with httpx.AsyncClient(
+            follow_redirects=True, headers=headers, timeout=timeout
+        ) as client:
+            response = await client.get(url)
+            response.raise_for_status()
+
+            # Optionally, parse specific sections of the docs here
+            return [types.TextContent(type="text", text=response.text)]
+    except httpx.TimeoutException:
+        return [
+            types.TextContent(
+                type="text",
+                text="Error: Request timed out while trying to fetch the Railway CLI docs.",
+            )
+        ]
+    except httpx.HTTPStatusError as e:
+        return [
+            types.TextContent(
+                type="text",
+                text=f"Error: HTTP {e.response.status_code} error while fetching the Railway CLI docs.",
+            )
+        ]
+    except Exception as e:
+        return [
+            types.TextContent(
+                type="text", text=f"Error: Failed to fetch Railway CLI docs: {str(e)}"
+            )
+        ]
+
+
+async def fetch_railway_docs_optimized(
+    url: str = "https://docs.railway.app/guides/cli",
+) -> list[types.TextContent]:
+    headers = {
+        "User-Agent": "MCP Railway Docs Fetcher (github.com/modelcontextprotocol/python-sdk)"
+    }
+
+    try:
+        timeout = httpx.Timeout(10.0, connect=5.0)
+        async with httpx.AsyncClient(
+            follow_redirects=True, headers=headers, timeout=timeout
+        ) as client:
+            response = await client.get(url)
+            response.raise_for_status()
+
+            # Parse HTML content
+            soup = BeautifulSoup(response.text, "html.parser")
+            content = []
+
+            # Try to find any command sections
+            for heading in soup.find_all(["h1", "h2", "h3", "h4"]):
+                heading_text = heading.get_text(strip=True).lower()
+                if any(
+                    keyword in heading_text for keyword in ["command", "cli", "usage"]
+                ):
+                    # Look for the next element that might contain commands
+                    next_elem = heading.find_next_sibling()
+                    while next_elem and next_elem.name not in [
+                        "ul",
+                        "ol",
+                        "h1",
+                        "h2",
+                        "h3",
+                        "h4",
+                    ]:
+                        next_elem = next_elem.find_next_sibling()
+
+                    if next_elem and next_elem.name in ["ul", "ol"]:
+                        commands = []
+                        for li in next_elem.find_all("li"):
+                            cmd_text = li.get_text(strip=True)
+                            if cmd_text:  # Only add non-empty commands
+                                commands.append(cmd_text)
+
+                        if commands:  # Only add sections that have commands
+                            content.append(f"\n{heading.get_text(strip=True)}:")
+                            content.extend(f"- {cmd}" for cmd in commands)
+
+            if content:
+                return [types.TextContent(type="text", text="\n".join(content))]
+
+            # If we couldn't find any command sections, try to extract any code blocks
+            code_blocks = soup.find_all(["pre", "code"])
+            if code_blocks:
+                content = ["Railway CLI Commands:"]
+                for block in code_blocks:
+                    code_text = block.get_text(strip=True)
+                    if code_text and any(
+                        keyword in code_text.lower() for keyword in ["railway", "cli"]
+                    ):
+                        content.append(code_text)
+                return [types.TextContent(type="text", text="\n".join(content))]
+
+            # If still nothing found, return a more helpful message
+            return [
+                types.TextContent(
+                    type="text",
+                    text="Could not find any CLI commands in the documentation. The page structure might have changed.",
+                )
+            ]
+    except Exception as e:
+        return [
+            types.TextContent(
+                type="text",
+                text=f"Error: Failed to fetch or parse Railway CLI docs: {str(e)}",
+            )
+        ]
+
+
+async def get_prompt_fix(
+    issue: str,
+) -> list[types.TextContent]:
+    """
+    Provides a prompt for performing root cause analysis and fixing issues.
+
+    Args:
+        issue: A description of the issue to be analyzed and fixed.
+
+    Returns:
+        A list containing a TextContent object with the prompt.
+    """
+    prompt = """<your-task>
+Do a step by step root cause analysis for the given issue(s). Then synthesize the necessary changes to fix the issue(s).
+</your-task>
+
+<your-agency>
+Decide if this is related to a previous error and/or fix:
+Case 1: If so, then use the respective game plan document and update it by adding stages. 
+
+Case 2: If not, then create a new task-based (including checkboxes) game plan with stages. Use filename structure `gameplan_<yyyymmdd-hhmm>_<id>.md` in directory @gameplans. IMPORTANT: Please ask me for the concrete timestamp to use and let me verify the ID before creating the game plan doc.
+
+Make sure you also add your reasoning and top-level details/references on how to implement the fix(es) to the respective tasks in the game plan.
+
+Also make sure you present me a management summary of your approach and the stages in the chat.
+</your-agency>
+
+<your-maxim-of-action>
+1. Always choose the most straightforward implementation option. Be surgical and laser focused.
+
+2. Make absolutely (!) sure you do not break existing code. Always (!) verify this by explicitly (!) reason about this aspect before proposing a code change. Always present your explicit reasoning on this.
+
+3. Always (!) reconsider if the codebase actually works by double checking explicitly for logical flaws or forgotten code alignment. Always (!) present your explicit reasoning on this
+</your-maxim-of-action>
+
+You never just proceed with implementing stages of the game plan, you always ask for my confirmation for this"""
+
+    # Include the issue in the response for context
+    response_text = f"Issue: {issue}\n\n{prompt}"
+    return [types.TextContent(type="text", text=response_text)]
 
 
 @click.command()
@@ -66,31 +242,44 @@ def main(port: int, transport: str) -> int:
     )
 
     @app.call_tool()
-    async def fetch_tool( # type: ignore[unused-function]
+    async def fetch_tool(  # type: ignore[unused-function]
         name: str, arguments: dict
     ) -> list[types.TextContent | types.ImageContent | types.EmbeddedResource]:
         if name == "mcp_fetch":
             if "url" not in arguments:
-                return [types.TextContent(
-                    type="text",
-                    text="Error: Missing required argument 'url'"
-                )]
+                return [
+                    types.TextContent(
+                        type="text", text="Error: Missing required argument 'url'"
+                    )
+                ]
             return await fetch_website(arguments["url"])
         elif name == "mood":
             if "question" not in arguments:
-                return [types.TextContent(
-                    type="text",
-                    text="Error: Missing required argument 'question'"
-                )]
+                return [
+                    types.TextContent(
+                        type="text", text="Error: Missing required argument 'question'"
+                    )
+                ]
             return await check_mood(arguments["question"])
+        if name == "fetch_railway_docs":
+            url = arguments.get("url", "https://docs.railway.app/guides/cli")
+            return await fetch_railway_docs(url)
+        if name == "fetch_railway_docs_optimized":
+            url = arguments.get("url", "https://docs.railway.app/guides/cli")
+            return await fetch_railway_docs_optimized(url)
+        elif name == "get_prompt_fix":
+            if "issue" not in arguments:
+                return [
+                    types.TextContent(
+                        type="text", text="Error: Missing required argument 'issue'"
+                    )
+                ]
+            return await get_prompt_fix(arguments["issue"])
         else:
-            return [types.TextContent(
-                type="text",
-                text=f"Error: Unknown tool: {name}"
-            )]
+            return [types.TextContent(type="text", text=f"Error: Unknown tool: {name}")]
 
     @app.list_tools()
-    async def list_tools() -> list[types.Tool]: # type: ignore[unused-function]
+    async def list_tools() -> list[types.Tool]:  # type: ignore[unused-function]
         return [
             types.Tool(
                 name="mcp_fetch",
@@ -119,28 +308,73 @@ def main(port: int, transport: str) -> int:
                         }
                     },
                 },
-            )
+            ),
+            types.Tool(
+                name="fetch_railway_docs",
+                description="Fetches the most recent Railway CLI documentation. Optionally, provide a custom URL.",
+                inputSchema={
+                    "type": "object",
+                    "properties": {
+                        "url": {
+                            "type": "string",
+                            "description": "Optional custom URL for fetching Railway CLI docs.",
+                        },
+                    },
+                },
+            ),
+            types.Tool(
+                name="fetch_railway_docs_optimized",
+                description="Fetches the most recent Railway CLI documentation. Optionally, provide a custom URL.",
+                inputSchema={
+                    "type": "object",
+                    "properties": {
+                        "url": {
+                            "type": "string",
+                            "description": "Optional custom URL for fetching Railway CLI docs.",
+                        },
+                    },
+                },
+            ),
+            types.Tool(
+                name="get_prompt_fix",
+                description="Provides a prompt for performing root cause analysis and fixing issues",
+                inputSchema={
+                    "type": "object",
+                    "required": ["issue"],
+                    "properties": {
+                        "issue": {
+                            "type": "string",
+                            "description": "A description of the issue to be analyzed and fixed",
+                        }
+                    },
+                },
+            ),
         ]
 
     if transport == "sse":
         from mcp.server.sse import SseServerTransport
-        from starlette.applications import Starlette
-        from starlette.routing import Mount, Route
 
         sse = SseServerTransport("/messages/")
 
         async def handle_sse(request):
-            async with sse.connect_sse(
-                request.scope, request.receive, request._send
-            ) as streams:
-                await app.run(
-                    streams[0], streams[1], app.create_initialization_options()
-                )
+            if request.method == "POST":
+                data = await request.json()
+                tool_name = data.get("tool")
+                arguments = data.get("arguments", {})
+                result = await fetch_tool(tool_name, arguments)
+                return JSONResponse({"result": serialize_content(result)})
+            else:
+                async with sse.connect_sse(
+                    request.scope, request.receive, request._send
+                ) as streams:
+                    await app.run(
+                        streams[0], streams[1], app.create_initialization_options()
+                    )
 
         starlette_app = Starlette(
             debug=True,
             routes=[
-                Route("/sse", endpoint=handle_sse),
+                Route("/sse", endpoint=handle_sse, methods=["GET", "POST"]),
                 Mount("/messages/", app=sse.handle_post_message),
             ],
         )
