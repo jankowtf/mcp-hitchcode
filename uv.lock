@@ -243,6 +243,7 @@ dependencies = [
     { name = "jinja2" },
     { name = "mcp" },
     { name = "packaging" },
+    { name = "pytest" },
     { name = "pyyaml" },
 ]
 
@@ -272,6 +273,7 @@ requires-dist = [
     { name = "mcp" },
     { name = "packaging", specifier = ">=24.2" },
     { name = "pyright", marker = "extra == 'dev'", specifier = ">=1.1.378" },
+    { name = "pytest", specifier = ">=8.3.4" },
     { name = "pytest", marker = "extra == 'dev'", specifier = ">=8.3.3" },
     { name = "pytest-asyncio", marker = "extra == 'dev'", specifier = ">=0.23.5" },
     { name = "pyyaml", specifier = ">=6.0.2" },
