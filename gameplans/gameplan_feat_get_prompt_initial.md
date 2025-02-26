@@ -42,17 +42,17 @@ This game plan outlines the steps to implement a new tool called `get_prompt_ini
 
 ## Stage 3: Tool Implementation
 
-- [ ] **Task 3.1: Implement the `get_prompt_initial` function**
+- [x] **Task 3.1: Implement the `get_prompt_initial` function**
   - Create an async function that accepts project description and version parameters
   - Use the `render_prompt_template` function to render the template
   - Return the rendered template as TextContent
 
-- [ ] **Task 3.2: Register the tool in the `fetch_tool` function**
+- [x] **Task 3.2: Register the tool in the `fetch_tool` function**
   - Add a new condition to handle the `get_prompt_initial` tool
   - Extract the "project" and optional "version" parameters from the arguments
   - Call the implemented function with the extracted parameters
 
-- [ ] **Task 3.3: Add the tool to the `list_tools` function**
+- [x] **Task 3.3: Add the tool to the `list_tools` function**
   - Create a new Tool instance for `get_prompt_initial`
   - Define the input schema with the required "project" parameter and optional "version" parameter
   - Add a clear description of the tool's purpose

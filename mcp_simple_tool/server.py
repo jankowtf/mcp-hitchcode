@@ -184,6 +184,27 @@ async def fetch_railway_docs_optimized(
         ]
 
 
+async def get_prompt_initial(
+    project: str,
+    version: str = "latest",
+) -> list[types.TextContent]:
+    """
+    Provides an initial prompt template for starting a new project.
+
+    Args:
+        project: A description of the project to start.
+        version: The version of the prompt template to use. Defaults to "latest".
+
+    Returns:
+        A list containing a TextContent object with the prompt.
+    """
+    # Render the prompt template with the project description
+    response_text = render_prompt_template(
+        "initial_prompt", version_str=version, project=project
+    )
+    return [types.TextContent(type="text", text=response_text)]
+
+
 async def get_prompt_fix(
     issue: str,
     version: str = "latest",
@@ -258,6 +279,15 @@ def main(port: int, transport: str) -> int:
                 ]
             version = arguments.get("version", "latest")
             return await get_prompt_fix(arguments["issue"], version=version)
+        elif name == "get_prompt_initial":
+            if "project" not in arguments:
+                return [
+                    types.TextContent(
+                        type="text", text="Error: Missing required argument 'project'"
+                    )
+                ]
+            version = arguments.get("version", "latest")
+            return await get_prompt_initial(arguments["project"], version=version)
         else:
             return [types.TextContent(type="text", text=f"Error: Unknown tool: {name}")]
 
@@ -328,6 +358,24 @@ def main(port: int, transport: str) -> int:
                         "issue": {
                             "type": "string",
                             "description": "A description of the issue to be analyzed and fixed",
+                        },
+                        "version": {
+                            "type": "string",
+                            "description": "The version of the prompt template to use (e.g., '1.0.0', '1.1.0', or 'latest')",
+                        },
+                    },
+                },
+            ),
+            types.Tool(
+                name="get_prompt_initial",
+                description="Provides an initial prompt template for starting a new project",
+                inputSchema={
+                    "type": "object",
+                    "required": ["project"],
+                    "properties": {
+                        "project": {
+                            "type": "string",
+                            "description": "A description of the project to start",
                         },
                         "version": {
                             "type": "string",
