@@ -8,6 +8,9 @@ from starlette.applications import Starlette
 from starlette.responses import JSONResponse
 from starlette.routing import Mount, Route
 
+# Use absolute import
+from mcp_simple_tool.templates.template_loader import render_prompt_template
+
 
 def serialize_content(content_list):
     return [{"type": content.type, "text": content.text} for content in content_list]
@@ -193,33 +196,8 @@ async def get_prompt_fix(
     Returns:
         A list containing a TextContent object with the prompt.
     """
-    prompt = """<your-task>
-Do a step by step root cause analysis for the given issue(s). Then synthesize the necessary changes to fix the issue(s).
-</your-task>
-
-<your-agency>
-Decide if this is related to a previous error and/or fix:
-Case 1: If so, then use the respective game plan document and update it by adding stages. 
-
-Case 2: If not, then create a new task-based (including checkboxes) game plan with stages. Use filename structure `gameplan_<yyyymmdd-hhmm>_<id>.md` in directory @gameplans. IMPORTANT: Please ask me for the concrete timestamp to use and let me verify the ID before creating the game plan doc.
-
-Make sure you also add your reasoning and top-level details/references on how to implement the fix(es) to the respective tasks in the game plan.
-
-Also make sure you present me a management summary of your approach and the stages in the chat.
-</your-agency>
-
-<your-maxim-of-action>
-1. Always choose the most straightforward implementation option. Be surgical and laser focused.
-
-2. Make absolutely (!) sure you do not break existing code. Always (!) verify this by explicitly (!) reason about this aspect before proposing a code change. Always present your explicit reasoning on this.
-
-3. Always (!) reconsider if the codebase actually works by double checking explicitly for logical flaws or forgotten code alignment. Always (!) present your explicit reasoning on this
-</your-maxim-of-action>
-
-You never just proceed with implementing stages of the game plan, you always ask for my confirmation for this"""
-
-    # Include the issue in the response for context
-    response_text = f"Issue: {issue}\n\n{prompt}"
+    # Render the prompt template with the issue
+    response_text = render_prompt_template("fix_prompt", issue=issue)
     return [types.TextContent(type="text", text=response_text)]
 
 
