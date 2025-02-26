@@ -24,16 +24,16 @@ This game plan outlines the steps to implement a new tool called `get_prompt_ini
 
 ## Stage 2: Template Creation
 
-- [ ] **Task 2.1: Create the template directory structure**
+- [x] **Task 2.1: Create the template directory structure**
   - Create a new directory `initial_prompt` under `mcp_simple_tool/templates/prompts/`
   - This will follow the same pattern as the existing `fix_prompt` directory
 
-- [ ] **Task 2.2: Create the initial template version**
+- [x] **Task 2.2: Create the initial template version**
   - Create a file `1.0.0.md` in the new directory
   - Add YAML front matter with version, creation date, description, and variables
   - Implement the template content with Jinja2 variable placeholders
 
-- [ ] **Task 2.3: Verify template structure**
+- [x] **Task 2.3: Verify template structure**
   - Ensure the template follows the same structure as existing templates
   - Verify that the YAML front matter is correctly formatted
   - Check that all necessary variables are defined in the front matter
