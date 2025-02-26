@@ -228,6 +228,7 @@ async def get_prompt_fix(
 
 async def get_prompt_proceed(
     task: str,
+    specific_instructions: str = "",
     version: str = "latest",
 ) -> list[types.TextContent]:
     """
@@ -235,14 +236,18 @@ async def get_prompt_proceed(
 
     Args:
         task: A description of the task or project to proceed with.
+        specific_instructions: Optional specific instructions to include in the prompt.
         version: The version of the prompt template to use. Defaults to "latest".
 
     Returns:
         A list containing a TextContent object with the prompt.
     """
-    # Render the prompt template with the task description
+    # Render the prompt template with the task description and specific instructions
     response_text = render_prompt_template(
-        "proceed_prompt", version_str=version, task=task
+        "proceed_prompt",
+        version_str=version,
+        task=task,
+        specific_instructions=specific_instructions,
     )
     return [types.TextContent(type="text", text=response_text)]
 
@@ -317,7 +322,12 @@ def main(port: int, transport: str) -> int:
                     )
                 ]
             version = arguments.get("version", "latest")
-            return await get_prompt_proceed(arguments["task"], version=version)
+            specific_instructions = arguments.get("specific_instructions", "")
+            return await get_prompt_proceed(
+                arguments["task"],
+                specific_instructions=specific_instructions,
+                version=version,
+            )
         else:
             return [types.TextContent(type="text", text=f"Error: Unknown tool: {name}")]
 
@@ -424,6 +434,10 @@ def main(port: int, transport: str) -> int:
                         "task": {
                             "type": "string",
                             "description": "A description of the task or project to proceed with",
+                        },
+                        "specific_instructions": {
+                            "type": "string",
+                            "description": "Optional specific instructions to include in the prompt",
                         },
                         "version": {
                             "type": "string",
