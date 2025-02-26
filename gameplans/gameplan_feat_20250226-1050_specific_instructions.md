@@ -36,43 +36,43 @@ This game plan outlines the steps to extend all prompt templates (`proceed_promp
   - Provide a clear description for the parameter
 
 ## Stage 3: Implementation for `get_prompt_initial`
-- [ ] **Task 3.1: Update the `get_prompt_initial` function**
+- [x] **Task 3.1: Update the `get_prompt_initial` function**
   - Add a new optional parameter `specific_instructions` with empty string as default
   - Update the function to pass the new parameter to the template renderer
   - Ensure backward compatibility is maintained
 
-- [ ] **Task 3.2: Update the initial_prompt template**
+- [x] **Task 3.2: Update the initial_prompt template**
   - Add the `<specific-instructions>` section to the template
   - Ensure the section is properly formatted and positioned
   - Use Jinja2 templating to include the specific instructions
 
-- [ ] **Task 3.3: Update the tool handler for initial_prompt**
+- [x] **Task 3.3: Update the tool handler for initial_prompt**
   - Modify the `fetch_tool` function to handle the new parameter
   - Extract the optional `specific_instructions` parameter from arguments
   - Pass the parameter to the `get_prompt_initial` function
 
-- [ ] **Task 3.4: Update the tool registration for initial_prompt**
+- [x] **Task 3.4: Update the tool registration for initial_prompt**
   - Update the tool schema in the `list_tools` function
   - Add the new parameter to the input schema
   - Provide a clear description for the parameter
 
 ## Stage 4: Implementation for `get_prompt_fix`
-- [ ] **Task 4.1: Update the `get_prompt_fix` function**
+- [x] **Task 4.1: Update the `get_prompt_fix` function**
   - Add a new optional parameter `specific_instructions` with empty string as default
   - Update the function to pass the new parameter to the template renderer
   - Ensure backward compatibility is maintained
 
-- [ ] **Task 4.2: Update the fix_prompt template**
+- [x] **Task 4.2: Update the fix_prompt template**
   - Add the `<specific-instructions>` section to the template
   - Ensure the section is properly formatted and positioned
   - Use Jinja2 templating to include the specific instructions
 
-- [ ] **Task 4.3: Update the tool handler for fix_prompt**
+- [x] **Task 4.3: Update the tool handler for fix_prompt**
   - Modify the `fetch_tool` function to handle the new parameter
   - Extract the optional `specific_instructions` parameter from arguments
   - Pass the parameter to the `get_prompt_fix` function
 
-- [ ] **Task 4.4: Update the tool registration for fix_prompt**
+- [x] **Task 4.4: Update the tool registration for fix_prompt**
   - Update the tool schema in the `list_tools` function
   - Add the new parameter to the input schema
   - Provide a clear description for the parameter

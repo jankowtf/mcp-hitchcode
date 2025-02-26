@@ -186,6 +186,7 @@ async def fetch_railway_docs_optimized(
 
 async def get_prompt_initial(
     project: str,
+    specific_instructions: str = "",
     version: str = "latest",
 ) -> list[types.TextContent]:
     """
@@ -193,20 +194,25 @@ async def get_prompt_initial(
 
     Args:
         project: A description of the project to start.
+        specific_instructions: Optional specific instructions to include in the prompt.
         version: The version of the prompt template to use. Defaults to "latest".
 
     Returns:
         A list containing a TextContent object with the prompt.
     """
-    # Render the prompt template with the project description
+    # Render the prompt template with the project description and specific instructions
     response_text = render_prompt_template(
-        "initial_prompt", version_str=version, project=project
+        "initial_prompt",
+        version_str=version,
+        project=project,
+        specific_instructions=specific_instructions,
     )
     return [types.TextContent(type="text", text=response_text)]
 
 
 async def get_prompt_fix(
     issue: str,
+    specific_instructions: str = "",
     version: str = "latest",
 ) -> list[types.TextContent]:
     """
@@ -214,14 +220,18 @@ async def get_prompt_fix(
 
     Args:
         issue: A description of the issue to be analyzed and fixed.
+        specific_instructions: Optional specific instructions to include in the prompt.
         version: The version of the prompt template to use. Defaults to "latest".
 
     Returns:
         A list containing a TextContent object with the prompt.
     """
-    # Render the prompt template with the issue
+    # Render the prompt template with the issue and specific instructions
     response_text = render_prompt_template(
-        "fix_prompt", version_str=version, issue=issue
+        "fix_prompt",
+        version_str=version,
+        issue=issue,
+        specific_instructions=specific_instructions,
     )
     return [types.TextContent(type="text", text=response_text)]
 
@@ -304,7 +314,12 @@ def main(port: int, transport: str) -> int:
                     )
                 ]
             version = arguments.get("version", "latest")
-            return await get_prompt_fix(arguments["issue"], version=version)
+            specific_instructions = arguments.get("specific_instructions", "")
+            return await get_prompt_fix(
+                issue=arguments["issue"],
+                specific_instructions=specific_instructions,
+                version=version,
+            )
         elif name == "get_prompt_initial":
             if "project" not in arguments:
                 return [
@@ -313,7 +328,12 @@ def main(port: int, transport: str) -> int:
                     )
                 ]
             version = arguments.get("version", "latest")
-            return await get_prompt_initial(arguments["project"], version=version)
+            specific_instructions = arguments.get("specific_instructions", "")
+            return await get_prompt_initial(
+                arguments["project"],
+                specific_instructions=specific_instructions,
+                version=version,
+            )
         elif name == "get_prompt_proceed":
             if "task" not in arguments:
                 return [
@@ -399,6 +419,10 @@ def main(port: int, transport: str) -> int:
                             "type": "string",
                             "description": "A description of the issue to be analyzed and fixed",
                         },
+                        "specific_instructions": {
+                            "type": "string",
+                            "description": "Optional specific instructions to include in the prompt",
+                        },
                         "version": {
                             "type": "string",
                             "description": "The version of the prompt template to use (e.g., '1.0.0', '1.1.0', or 'latest')",
@@ -416,6 +440,10 @@ def main(port: int, transport: str) -> int:
                         "project": {
                             "type": "string",
                             "description": "A description of the project to start",
+                        },
+                        "specific_instructions": {
+                            "type": "string",
+                            "description": "Optional specific instructions to include in the prompt",
                         },
                         "version": {
                             "type": "string",
