@@ -169,9 +169,75 @@ async def test_get_prompt_proceed_version() -> None:
             )
 
 
+@pytest.mark.asyncio
+async def test_get_prompt_change() -> None:
+    """Test that the get_prompt_change tool works correctly."""
+    async with stdio_client(
+        StdioServerParameters(command="uv", args=["run", "mcp-simple-tool"])
+    ) as (read, write):
+        async with ClientSession(read, write) as session:
+            await session.initialize()
+
+            # Verify the tool is in the list of available tools
+            tools = await session.list_tools()
+            assert tools is not None, "Tools list should not be None"
+            tool_names = [tool.name for tool in tools.tools]
+            assert "get_prompt_change" in tool_names, (
+                "get_prompt_change tool should be available"
+            )
+
+            # Call the tool and verify the response
+            result = await session.call_tool(
+                "get_prompt_change", {"change_request": "Test change request"}
+            )
+            assert result is not None, "get_prompt_change response should not be None"
+            assert len(result.content) > 0, "get_prompt_change should return content"
+
+            # Verify the response contains expected content
+            response_text = result.content[0].text
+            assert "Change Request: Test change request" in response_text, (
+                "Response should contain the change request"
+            )
+            assert "<your-task>" in response_text, (
+                "Response should contain task section"
+            )
+            assert "<your-agency>" in response_text, (
+                "Response should contain agency section"
+            )
+            assert "<your-maxim-of-action>" in response_text, (
+                "Response should contain maxim section"
+            )
+
+
+@pytest.mark.asyncio
+async def test_get_prompt_change_version() -> None:
+    """Test that the get_prompt_change tool works with version parameter."""
+    async with stdio_client(
+        StdioServerParameters(command="uv", args=["run", "mcp-simple-tool"])
+    ) as (read, write):
+        async with ClientSession(read, write) as session:
+            await session.initialize()
+
+            # Call the tool with version parameter and verify the response
+            result = await session.call_tool(
+                "get_prompt_change",
+                {"change_request": "Test change request", "version": "1.0.0"},
+            )
+            assert result is not None, "get_prompt_change response should not be None"
+            assert len(result.content) > 0, "get_prompt_change should return content"
+
+            # Verify the response contains expected content
+            response_text = result.content[0].text
+            assert "Change Request: Test change request" in response_text, (
+                "Response should contain the change request"
+            )
+
+
 if __name__ == "__main__":
     asyncio.run(test_get_prompt_fix())
     asyncio.run(test_get_prompt_initial())
     asyncio.run(test_get_prompt_initial_version())
     asyncio.run(test_get_prompt_proceed())
     asyncio.run(test_get_prompt_proceed_version())
+    asyncio.run(test_get_prompt_change())
+    asyncio.run(test_get_prompt_change_version())
