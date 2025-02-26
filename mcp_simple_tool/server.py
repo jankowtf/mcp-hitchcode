@@ -186,18 +186,22 @@ async def fetch_railway_docs_optimized(
 
 async def get_prompt_fix(
     issue: str,
+    version: str = "latest",
 ) -> list[types.TextContent]:
     """
     Provides a prompt for performing root cause analysis and fixing issues.
 
     Args:
         issue: A description of the issue to be analyzed and fixed.
+        version: The version of the prompt template to use. Defaults to "latest".
 
     Returns:
         A list containing a TextContent object with the prompt.
     """
     # Render the prompt template with the issue
-    response_text = render_prompt_template("fix_prompt", issue=issue)
+    response_text = render_prompt_template(
+        "fix_prompt", version_str=version, issue=issue
+    )
     return [types.TextContent(type="text", text=response_text)]
 
 
@@ -252,7 +256,8 @@ def main(port: int, transport: str) -> int:
                         type="text", text="Error: Missing required argument 'issue'"
                     )
                 ]
-            return await get_prompt_fix(arguments["issue"])
+            version = arguments.get("version", "latest")
+            return await get_prompt_fix(arguments["issue"], version=version)
         else:
             return [types.TextContent(type="text", text=f"Error: Unknown tool: {name}")]
 
@@ -323,7 +328,11 @@ def main(port: int, transport: str) -> int:
                         "issue": {
                             "type": "string",
                             "description": "A description of the issue to be analyzed and fixed",
-                        }
+                        },
+                        "version": {
+                            "type": "string",
+                            "description": "The version of the prompt template to use (e.g., '1.0.0', '1.1.0', or 'latest')",
+                        },
                     },
                 },
             ),

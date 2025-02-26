@@ -75,6 +75,30 @@ This game plan outlines the steps to implement a templating system for the `get_
 
 **End of Stage 3**
 
+## Stage 4: Implementing Semantic Versioning for Templates
+
+- [x] **Task 4.1: Design the versioning system**
+  - Determine how to represent versions in template files
+  - Design a directory structure that supports multiple versions
+  - Define a version selection mechanism
+
+- [x] **Task 4.2: Update the template directory structure**
+  - Reorganize templates to include version information
+  - Create a versioned directory structure
+  - Ensure backward compatibility
+
+- [x] **Task 4.3: Enhance the template loader**
+  - Add version awareness to the template loading mechanism
+  - Implement version selection logic
+  - Add fallback mechanisms for missing versions
+
+- [x] **Task 4.4: Update the template rendering API**
+  - Add version parameters to template rendering functions
+  - Implement version validation
+  - Provide default version handling
+
+**End of Stage 4**
+
 ## Implementation Details
 
 ### Template Directory Structure
@@ -86,7 +110,9 @@ mcp_simple_tool/
 └── templates/
     ├── __init__.py
     └── prompts/
-        └── fix_prompt.md
+        └── fix_prompt/
+            ├── 1.0.0.md
+            └── 1.1.0.md
 ```
 
 ### Template Loading Mechanism
@@ -99,6 +125,18 @@ We'll create a `template_loader.py` module with the following functionality:
 The template will use Markdown for content structure with Jinja2 syntax for variable substitution:
 
 ```markdown
+---
+version: 1.1.0
+created: 2025-02-26
+description: Enhanced prompt for root cause analysis and issue fixing
+variables:
+  - issue: Description of the issue to analyze
+changelog:
+  - Added more detailed instructions for root cause analysis
+  - Improved formatting for better readability
+  - Added changelog metadata
+---
+
 Issue: {{ issue }}
 
 <your-task>
@@ -125,7 +163,6 @@ Also make sure you present me a management summary of your approach and the stag
 </your-maxim-of-action>
 
 You never just proceed with implementing stages of the game plan, you always ask for my confirmation for this
-```
 
 ### Dependencies
 - Jinja2: For template rendering
@@ -135,3 +172,30 @@ You never just proceed with implementing stages of the game plan, you always ask
 1. Ensuring templates are correctly included in the package distribution
 2. Handling template loading errors gracefully
 3. Maintaining backward compatibility with the existing MCP system 
+
+### Versioning System
+We've implemented semantic versioning (MAJOR.MINOR.PATCH) for templates with the following characteristics:
+- **MAJOR**: Breaking changes to the template structure or variables
+- **MINOR**: New features or content added in a backward-compatible manner
+- **PATCH**: Backward-compatible bug fixes or text improvements
+
+### Version Selection Mechanism
+The template loader has been enhanced to:
+1. Accept an optional version parameter (`version_str`)
+2. Default to "latest" if no version is specified
+3. Automatically detect and use the newest version as "latest"
+4. Provide fallback to older versions if a specific version is not found
+
+### Template Directory Structure
+```
+mcp_simple_tool/
+├── __init__.py
+├── __main__.py
+├── server.py
+└── templates/
+    ├── __init__.py
+    └── prompts/
+        └── fix_prompt/
+            ├── 1.0.0.md
+            └── 1.1.0.md
+```
