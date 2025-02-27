@@ -48,16 +48,16 @@ This game plan outlines the steps to rename the prompt folders and update the te
 
 ## Stage 3: Migrate Templates
 
-- [ ] **Task 3.1: Create the new directory structure**
+- [x] **Task 3.1: Create the new directory structure**
   - Create the new directories with the updated names
   - This prepares the filesystem for the template migration
 
-- [ ] **Task 3.2: Copy and rename template files**
+- [x] **Task 3.2: Copy and rename template files**
   - Copy each template file to its new location with the updated filename
   - For example, copy `prompts/change_prompt/1.0.0.md` to `prompts/change/change_v1.0.0.md`
   - This preserves the original files until we're sure everything works
 
-- [ ] **Task 3.3: Verify template content**
+- [x] **Task 3.3: Verify template content**
   - Check that all template content has been correctly migrated
   - Ensure no templates were missed during the migration
   - This verification step helps catch any issues before updating the code
