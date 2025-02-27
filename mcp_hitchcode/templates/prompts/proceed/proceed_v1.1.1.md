@@ -169,4 +169,8 @@ feat(component): implement [brief description]
 
 Addresses Stage [X] of the game plan.
 ```
-</completion-directive> 
+</completion-directive>
+
+<stage-transition-directive>
+IF THE USER RESPONDS WITH `proceed` OR CONFIRMS THEY WANT TO PROCEED TO THE NEXT STAGE, YOU MUST CALL THE TOOL `mcp__apply_prompt_proceed` WITH THE APPROPRIATE VALUES FOR THE ARGUMENTS `task` (CONTAINING THE NEXT STAGE DESCRIPTION FROM THE GAME PLAN) AND `specific_instructions` (CONTAINING ANY RELEVANT DETAILS FOR IMPLEMENTATION).
+</stage-transition-directive> 

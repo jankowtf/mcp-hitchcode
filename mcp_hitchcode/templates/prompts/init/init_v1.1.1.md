@@ -153,4 +153,6 @@ Confirm you have understood these instructions by responding with:
 <transition-directive>
 After the project foundation is completely established, you MUST explicitly signal readiness to proceed with:
 "INITIALIZATION COMPLETE: The project foundation has been established according to the game plan. Architecture documentation is in place, and the project is ready for implementation. Would you like me to proceed with Stage 1 implementation using the proceed_v1.1.1 template?"
+
+IF THE USER RESPONDS WITH `proceed` OR CONFIRMS THEY WANT TO PROCEED, YOU MUST CALL THE TOOL `mcp__apply_prompt_proceed` WITH THE APPROPRIATE VALUES FOR THE ARGUMENTS `task` (CONTAINING THE CURRENT STAGE DESCRIPTION FROM THE GAME PLAN) AND `specific_instructions` (CONTAINING ANY RELEVANT DETAILS FOR IMPLEMENTATION).
 </transition-directive> 
