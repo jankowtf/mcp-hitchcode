@@ -121,12 +121,78 @@ YOUR FIX MUST PRESERVE THE INTEGRITY OF THE DEVELOPMENT FLOW
 
 3. CONSTRAINT #3: CODE QUALITY - You MUST maintain or improve code quality with your fix. Hacky workarounds are UNACCEPTABLE.
 
+4. CONSTRAINT #4: GAME PLAN AWARENESS - You MUST check if the existing game plan in the gameplans directory is affected by this fix. If a fix impacts the game plan, you MUST note this impact but NOT modify the game plan directly.
+
 VIOLATION WARNING: FAILURE TO FOLLOW THESE CONSTRAINTS WILL RESULT IN FRAGILE FIXES, RECURRING ISSUES, AND POTENTIAL SYSTEM INSTABILITY. EACH FIX MUST BE THOROUGHLY VALIDATED.
 </hard-constraints>
 
+<game-plan-consideration-protocol>
+YOU MUST CONSIDER GAME PLANS WHEN FIXING ISSUES:
+
+1. At the beginning of analysis, YOU MUST check for existing game plan files:
+   "GAME PLAN CONSIDERATION: I have checked for game plans in the gameplans directory that might be affected by this fix."
+
+2. If the fix impacts tasks or assumptions in an existing game plan, YOU MUST explicitly note this:
+   "GAME PLAN IMPACT: This fix will impact the game plan at 'gameplans/[filename]' in the following ways: [specific impacts]."
+
+3. YOU MUST NOT modify game plan files directly when in fix mode. Instead, document impacts for consideration by the user once the fix is complete:
+   "RECOMMENDED GAME PLAN UPDATES: After this fix is complete, the game plan should be updated to reflect the following changes: [suggested updates]."
+
+4. If the fix requires significant changes that invalidate portions of the game plan, YOU MUST alert the user:
+   "GAME PLAN VALIDATION WARNING: This fix suggests that [specific aspects] of the current game plan may need reconsideration."
+
+5. YOU MUST determine if the fix is related to a meta objective for which a game plan already exists:
+   a) If a RELATED game plan exists, follow steps 2-4 above.
+   b) If NO RELATED game plan exists and the issue represents a significant feature or change requiring structured implementation, YOU MUST create a new game plan as follows:
+</game-plan-consideration-protocol>
+
+<game-plan-creation-protocol>
+WHEN CREATING A NEW GAME PLAN FOR A META OBJECTIVE IDENTIFIED DURING FIXES:
+
+1. YOU MUST IMMEDIATELY prompt the user with:
+   "META OBJECTIVE IDENTIFIED: This fix addresses a larger objective that warrants a game plan. I need to create a game plan file."
+
+2. YOU MUST THEN REQUEST A TIMESTAMP with:
+   "TIMESTAMP REQUEST: I need to create a timestamp for the game plan file. Should I use the current time (YYYYMMDD-HHMM format) or would you prefer to specify a different timestamp?"
+
+3. After receiving the timestamp (or using the current time if instructed), YOU MUST create a file with the following naming convention:
+   - Format: gameplan_fix_[timestamp]_[short-description].md
+   - Example: gameplan_fix_20250301-1430_authentication-system.md
+
+4. The file MUST be created in the "gameplans" directory.
+
+5. The file MUST contain the complete game plan with:
+   - A title (# Game Plan: [Meta Objective Name])
+   - An overview section explaining the meta objective identified during fixing
+   - Detailed stages with tasks (including the current fix as a completed task)
+   - Implementation details for remaining tasks
+   - Reasoning for the approach
+   - Impact analysis
+   - Success criteria
+
+6. YOU MUST EXPLICITLY CONFIRM the file creation with:
+   "GAME PLAN MATERIALIZED: I have created the game plan file at 'gameplans/[filename]'. This file documents the meta objective identified during this fix and outlines the complete implementation plan for addressing it properly."
+
+7. After creating the game plan, YOU MUST continue with the immediate fix while noting:
+   "CURRENT SCOPE: I will now continue with the immediate fix as described earlier. The broader objective has been documented in the game plan for future implementation."
+
+VIOLATION WARNING: WHEN A META OBJECTIVE IS IDENTIFIED, FAILURE TO MATERIALIZE THE GAME PLAN AS A FILE IS A CRITICAL ERROR. THE META OBJECTIVE MUST BE PROPERLY DOCUMENTED IN THE GAMEPLANS DIRECTORY.
+</game-plan-creation-protocol>
+
+<isolated-fixes-protocol>
+IF THE FIX IS ISOLATED AND DOESN'T WARRANT A FULL GAME PLAN:
+
+1. If the fix is isolated and doesn't warrant a full game plan, but no relevant game plan exists, YOU MUST note this:
+   "GAME PLAN ASSESSMENT: No relevant game plan was found. This fix is isolated and doesn't require a full game plan, but using the init template could be beneficial for future related development."
+
+2. YOU MUST then focus solely on implementing the isolated fix without creating a game plan.
+
+REMINDER: YOUR FOCUS IS ON FIXING THE IMMEDIATE ISSUE, BUT YOU MUST MAINTAIN AWARENESS OF HOW FIXES IMPACT THE BROADER PROJECT PLAN AND DETERMINE IF NEW GAME PLANS ARE NEEDED.
+</isolated-fixes-protocol>
+
 <verification-request>
 Confirm you have understood these instructions by responding with:
-"CONFIRMATION TYPE #5: I will follow the diagnostic protocol for the issue. I will thoroughly analyze the root cause before implementing any changes, ensure my fix is minimal and consistent with the codebase, verify the effectiveness of my solution, and document my changes clearly."
+"CONFIRMATION TYPE #5: I will follow the diagnostic protocol for the issue. I will thoroughly analyze the root cause before implementing any changes, ensure my fix is minimal and consistent with the codebase, consider impacts on existing game plans, verify the effectiveness of my solution, and document my changes clearly."
 </verification-request>
 
 <transition-directive>

@@ -94,6 +94,33 @@ REMINDER: ALL STEPS IN THIS SECTION MUST BE PERFORMED IN SEQUENCE - NO EXCEPTION
 7. Establish consistent coding standards and patterns from the beginning.
 </implementation-principles>
 
+<game-plan-materialization>
+YOU MUST MATERIALIZE THE GAME PLAN AS A MARKDOWN FILE:
+
+1. After creating the game plan (after CONFIRMATION TYPE #3), YOU MUST IMMEDIATELY prompt the user with:
+   "TIMESTAMP REQUEST: I need to create a timestamp for the game plan file. Should I use the current time (YYYYMMDD-HHMM format) or would you prefer to specify a different timestamp?"
+
+2. After receiving the timestamp (or using the current time if instructed), YOU MUST create a file with the following naming convention:
+   - Format: gameplan_[project-type]_[timestamp]_[short-description].md
+   - Example: gameplan_feat_20250227-1200_unit-tests-tool.md
+
+3. The file MUST be created in the "gameplans" directory.
+
+4. The file MUST contain the complete game plan with:
+   - A title (# Game Plan: [Project Name])
+   - An overview section
+   - Detailed stages with tasks
+   - Implementation details
+   - Reasoning
+   - Impact analysis
+   - Success criteria
+
+5. YOU MUST EXPLICITLY CONFIRM the file creation with:
+   "GAME PLAN MATERIALIZED: I have created the game plan file at 'gameplans/[filename]'. This file contains the complete implementation plan with all stages and tasks."
+
+VIOLATION WARNING: FAILURE TO MATERIALIZE THE GAME PLAN AS A FILE IS A CRITICAL ERROR. NO IMPLEMENTATION SHOULD PROCEED UNTIL THE GAME PLAN IS PROPERLY DOCUMENTED IN THE GAMEPLANS DIRECTORY.
+</game-plan-materialization>
+
 <mandatory-checkpoints>
 1. CHECKPOINT #1: REQUIREMENT ANALYSIS - You must explicitly state: "CONFIRMATION TYPE #1: I have analyzed the project objective and identified the following key requirements: [list requirements]. These requirements suggest a [type] of application with [characteristics]."
 
@@ -113,12 +140,14 @@ REMINDER: ALL STEPS IN THIS SECTION MUST BE PERFORMED IN SEQUENCE - NO EXCEPTION
 
 3. CONSTRAINT #3: DOCUMENTATION - You MUST document all architectural decisions, patterns, and technical considerations. Undocumented design elements are FORBIDDEN.
 
+4. CONSTRAINT #4: GAME PLAN MATERIALIZATION - You MUST create a markdown file in the gameplans directory with the complete game plan BEFORE proceeding to implementation. Failure to do so is a CRITICAL VIOLATION.
+
 VIOLATION WARNING: FAILURE TO FOLLOW THESE CONSTRAINTS WILL RESULT IN PROJECT DRIFT, TECHNICAL DEBT, AND POTENTIAL PROJECT FAILURE. THE FOUNDATION MUST BE SOLID AND WELL-DOCUMENTED.
 </hard-constraints>
 
 <verification-request>
 Confirm you have understood these instructions by responding with:
-"CONFIRMATION TYPE #5: I will follow the initialization protocol for this project. I will analyze the requirements thoroughly, design an appropriate architecture, create a comprehensive game plan, implement a solid foundation, document all decisions clearly, and verify the foundation fulfills all initial requirements before transitioning to implementation."
+"CONFIRMATION TYPE #5: I will follow the initialization protocol for this project. I will analyze the requirements thoroughly, design an appropriate architecture, create a comprehensive game plan, implement a solid foundation, document all decisions clearly, and verify the foundation fulfills all initial requirements before transitioning to implementation. I will materialize the game plan as a markdown file in the gameplans directory with appropriate timestamp."
 </verification-request>
 
 <transition-directive>

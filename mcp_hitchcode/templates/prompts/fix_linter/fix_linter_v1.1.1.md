@@ -125,12 +125,81 @@ YOUR FIXES MUST PRESERVE THE INTEGRITY OF THE DEVELOPMENT FLOW
 
 3. CONSTRAINT #3: COMPLETE RESOLUTION - You MUST resolve ALL linter errors before considering the task complete. Partial fixes are UNACCEPTABLE.
 
+4. CONSTRAINT #4: GAME PLAN AWARENESS - You MUST check if existing game plan files in the gameplans directory involve code affected by linter errors. If fixes impact game plan tasks, you MUST note these impacts but NOT modify the game plans directly.
+
 VIOLATION WARNING: FAILURE TO FOLLOW THESE CONSTRAINTS WILL RESULT IN INCONSISTENT CODE STYLE, POTENTIAL REGRESSIONS, AND RECURRING LINTER ISSUES. EACH FIX MUST BE THOROUGH AND SYSTEMATIC.
 </hard-constraints>
 
+<game-plan-consideration-protocol>
+YOU MUST MAINTAIN AWARENESS OF GAME PLANS WHEN FIXING LINTER ERRORS:
+
+1. At the beginning of analysis, YOU MUST check for game plans in the gameplans directory:
+   "GAME PLAN CONSIDERATION: I have checked for game plans that might involve code affected by these linter errors."
+
+2. If linter fixes are for code that is part of ongoing game plan implementation, YOU MUST note this:
+   "GAME PLAN RELEVANCE: These linter errors affect code that is part of the implementation described in 'gameplans/[filename]'."
+
+3. YOU MUST NOT modify game plan files directly during linter fixes. If linter errors suggest needed changes to game plan tasks, document these for later consideration:
+   "GAME PLAN IMPLICATIONS: The fixes for these linter errors suggest the following game plan tasks might need adjustment: [specific implications]."
+
+4. YOU MUST maintain focus on fixing linter errors rather than broader implementation changes, even if the latter seem beneficial:
+   "SCOPE LIMITATION: While fixing these linter errors, I identified potential broader improvements that could be addressed as separate tasks in the game plan: [potential improvements]."
+
+5. If the linter fixes complete a task in a game plan, YOU MUST note this for the user:
+   "GAME PLAN PROGRESS: The resolution of these linter errors effectively completes task [task description] from the game plan at 'gameplans/[filename]'."
+
+6. YOU MUST determine if the linter errors are related to a meta objective for which a game plan already exists:
+   a) If a RELATED game plan exists, follow steps 2-5 above.
+   b) If NO RELATED game plan exists and the linter errors reveal a significant feature or component requiring structured implementation, YOU MUST create a new game plan as follows:
+</game-plan-consideration-protocol>
+
+<game-plan-creation-protocol>
+WHEN CREATING A NEW GAME PLAN FOR A META OBJECTIVE IDENTIFIED DURING LINTER FIXES:
+
+1. YOU MUST IMMEDIATELY prompt the user with:
+   "META OBJECTIVE IDENTIFIED: These linter errors relate to a larger objective that warrants a game plan. I need to create a game plan file."
+
+2. YOU MUST THEN REQUEST A TIMESTAMP with:
+   "TIMESTAMP REQUEST: I need to create a timestamp for the game plan file. Should I use the current time (YYYYMMDD-HHMM format) or would you prefer to specify a different timestamp?"
+
+3. After receiving the timestamp (or using the current time if instructed), YOU MUST create a file with the following naming convention:
+   - Format: gameplan_lint_[timestamp]_[short-description].md
+   - Example: gameplan_lint_20250301-1430_api-validation-framework.md
+
+4. The file MUST be created in the "gameplans" directory.
+
+5. The file MUST contain the complete game plan with:
+   - A title (# Game Plan: [Meta Objective Name])
+   - An overview section explaining the meta objective identified during linter fixes
+   - Detailed stages with tasks (including the current linter fixes as a completed task)
+   - Implementation details for remaining tasks
+   - Reasoning for the approach
+   - Impact analysis
+   - Success criteria
+
+6. YOU MUST EXPLICITLY CONFIRM the file creation with:
+   "GAME PLAN MATERIALIZED: I have created the game plan file at 'gameplans/[filename]'. This file documents the meta objective identified during these linter fixes and outlines the complete implementation plan for addressing it properly."
+
+7. After creating the game plan, YOU MUST continue with the immediate linter fixes while noting:
+   "CURRENT SCOPE: I will now continue with the immediate linter fixes as described earlier. The broader objective has been documented in the game plan for future implementation."
+
+VIOLATION WARNING: WHEN A META OBJECTIVE IS IDENTIFIED, FAILURE TO MATERIALIZE THE GAME PLAN AS A FILE IS A CRITICAL ERROR. THE META OBJECTIVE MUST BE PROPERLY DOCUMENTED IN THE GAMEPLANS DIRECTORY.
+</game-plan-creation-protocol>
+
+<isolated-linter-errors-protocol>
+IF THE LINTER ERRORS ARE ISOLATED AND DON'T WARRANT A FULL GAME PLAN:
+
+1. If the linter errors are isolated and don't warrant a full game plan, but no relevant game plan exists, YOU MUST note this:
+   "GAME PLAN ASSESSMENT: No relevant game plan was found. These linter errors appear isolated and don't require a full game plan, but using the init template could be beneficial if these components will see continued development."
+
+2. YOU MUST then focus solely on fixing the linter errors without creating a game plan.
+
+REMINDER: LINTER ERROR FIXES ARE LIMITED IN SCOPE AND SHOULD NOT ATTEMPT TO SOLVE BROADER ARCHITECTURAL OR IMPLEMENTATION ISSUES DOCUMENTED IN GAME PLANS. HOWEVER, YOU MUST DETERMINE IF THE ERRORS INDICATE A NEED FOR A NEW GAME PLAN.
+</isolated-linter-errors-protocol>
+
 <verification-request>
 Confirm you have understood these instructions by responding with:
-"CONFIRMATION TYPE #5: I will follow the linter resolution protocol. I will systematically categorize and prioritize all linter errors, develop a consistent strategy for fixing each type, implement fixes in a prioritized order while preserving code intent, verify the complete resolution of all errors, and document patterns for future prevention."
+"CONFIRMATION TYPE #5: I will follow the linter resolution protocol. I will systematically categorize and prioritize all linter errors, develop a consistent strategy for fixing each type, implement fixes in a prioritized order while preserving code intent, maintain awareness of impacts on game plans, verify the complete resolution of all errors, and document patterns for future prevention."
 </verification-request>
 
 <transition-directive>

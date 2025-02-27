@@ -127,12 +127,41 @@ ONLY MARK THE CHANGE AS COMPLETE WHEN ALL CHECKBOXES CAN BE CHECKED
 
 3. CONSTRAINT #3: VALIDATION COMPLETENESS - You MUST verify all aspects of your implementation against the validation checklist. Incomplete validation is PROHIBITED.
 
+4. CONSTRAINT #4: GAME PLAN ALIGNMENT - You MUST check if the change affects the existing game plan in the gameplans directory. If it does, you MUST update the game plan or create a supplementary change game plan file before implementing changes.
+
 VIOLATION WARNING: FAILURE TO FOLLOW THESE CONSTRAINTS WILL RESULT IN SCOPE CREEP, TECHNICAL DEBT, AND POTENTIAL REGRESSIONS. EACH CHANGE MUST BE THOROUGHLY VALIDATED AGAINST ALL REQUIREMENTS.
 </hard-constraints>
 
+<game-plan-change-protocol>
+YOU MUST EVALUATE AND UPDATE GAME PLANS WHEN IMPLEMENTING CHANGES:
+
+1. At the beginning of analysis, YOU MUST identify existing game plan files:
+   "GAME PLAN ASSESSMENT: I have identified the game plan at 'gameplans/[filename]'. I will analyze how the requested change impacts this game plan."
+
+2. If the change significantly affects the existing game plan, YOU MUST either:
+   A. Update the existing game plan file with change annotations, clearly marking modifications with "CHANGE: [date]" 
+   B. Create a supplementary change game plan file with naming convention:
+      - Format: gameplan_change_[timestamp]_[change-description].md
+      - Example: gameplan_change_20250301-1430_add-authentication.md
+
+3. The game plan update or supplementary file MUST include:
+   - Clear explanation of the change and its impact on the original plan
+   - Modified or new stages and tasks required
+   - Affected components and dependencies
+   - Implementation strategy that minimizes disruption
+
+4. YOU MUST EXPLICITLY CONFIRM game plan updates with:
+   "GAME PLAN UPDATED: I have [updated the existing/created a supplementary] game plan file at 'gameplans/[filename]' to accommodate the requested change."
+
+5. If no game plan file exists, YOU MUST alert the user:
+   "WARNING: No game plan file found in the gameplans directory. This change is being implemented without reference to a master game plan, which may lead to inconsistencies. Consider using the init_v1.1.1 template to create a proper game plan."
+
+VIOLATION WARNING: FAILURE TO ALIGN CHANGES WITH THE GAME PLAN IS A CRITICAL ERROR. CHANGES MUST BE PROPERLY DOCUMENTED IN THE GAME PLAN TO MAINTAIN PROJECT COHERENCE.
+</game-plan-change-protocol>
+
 <verification-request>
 Confirm you have understood these instructions by responding with:
-"CONFIRMATION TYPE #5: I will follow the change implementation protocol. I will thoroughly analyze the change request, develop a detailed implementation plan, execute changes methodically, validate against all requirements, and ensure all items in the validation checklist are satisfied before considering the change complete."
+"CONFIRMATION TYPE #5: I will follow the change implementation protocol. I will thoroughly analyze the change request, evaluate its impact on the existing game plan, update or create game plan documentation as needed, develop a detailed implementation plan, execute changes methodically, validate against all requirements, and ensure all items in the validation checklist are satisfied before considering the change complete."
 </verification-request>
 
 <completion-directive>

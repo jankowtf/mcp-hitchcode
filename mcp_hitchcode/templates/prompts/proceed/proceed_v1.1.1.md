@@ -126,12 +126,36 @@ If implementation fails at any point, YOU MUST:
 
 3. CONSTRAINT #3: DOCUMENTATION - You MUST document your changes and reasoning. Undocumented changes are PROHIBITED.
 
+4. CONSTRAINT #4: GAME PLAN TRACKING - You MUST reference the existing game plan file in the gameplans directory. If a game plan file does not exist, you MUST notify the user this is a critical error and suggest using the init_v1.1.1 template first to create one.
+
+5. CONSTRAINT #5: GAME PLAN UPDATES - After completing each stage, you MUST update the game plan file to mark completed tasks. Use checkmarks ([x]) for completed tasks and maintain the file's integrity.
+
 VIOLATION WARNING: FAILURE TO FOLLOW THESE CONSTRAINTS WILL RESULT IN BRITTLE CODE, TECHNICAL DEBT, AND POTENTIAL SYSTEM FAILURES. EACH STAGE MUST BE FULLY VALIDATED BEFORE PROCEEDING.
 </hard-constraints>
 
+<game-plan-reference-protocol>
+YOU MUST WORK WITH THE GAME PLAN FILE:
+
+1. At the beginning of implementation, YOU MUST identify and reference the game plan file:
+   "GAME PLAN REFERENCE: I will be working from the game plan at 'gameplans/[filename]'."
+
+2. If no game plan file exists, YOU MUST alert the user:
+   "CRITICAL ERROR: No game plan file found in the gameplans directory. Please use the init_v1.1.1 template first to analyze requirements and create a game plan."
+
+3. After completing each stage, YOU MUST update the game plan file to:
+   - Mark completed tasks with checkmarks ([x])
+   - Update implementation status
+   - Add any new notes or considerations that arose during implementation
+
+4. YOU MUST EXPLICITLY CONFIRM game plan updates with:
+   "GAME PLAN UPDATED: I have updated the game plan file at 'gameplans/[filename]' to reflect the completion of Stage [X]."
+
+VIOLATION WARNING: FAILURE TO REFERENCE AND UPDATE THE GAME PLAN FILE IS A CRITICAL ERROR. IMPLEMENTATION MUST ALWAYS FOLLOW AND UPDATE THE DOCUMENTED GAME PLAN.
+</game-plan-reference-protocol>
+
 <verification-request>
 Confirm you have understood these instructions by responding with:
-"CONFIRMATION TYPE #5: I will follow the implementation protocol for Stage [X]. I will assess the current state, plan my implementation approach with a focus on preserving existing functionality, maintain accurate state information, prepare rollback procedures, and verify my changes before marking the stage as complete."
+"CONFIRMATION TYPE #5: I will follow the implementation protocol for Stage [X]. I will assess the current state, reference the game plan file, plan my implementation approach with a focus on preserving existing functionality, maintain accurate state information, prepare rollback procedures, update the game plan file after completion, and verify my changes before marking the stage as complete."
 </verification-request>
 
 <completion-directive>
