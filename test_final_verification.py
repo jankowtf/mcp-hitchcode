@@ -17,6 +17,7 @@ from mcp_hitchcode.server import (
     apply_prompt_change,
     apply_prompt_fix,
     apply_prompt_fix_linter,
+    apply_prompt_infra,
     apply_prompt_initial,
     apply_prompt_proceed,
     apply_prompt_unit_tests,
@@ -260,6 +261,19 @@ async def verify_server_functions() -> bool:
         print(f"First 100 characters: {result[0].text[:100]}...")
     except Exception as e:
         print(f"❌ Error in apply_prompt_unit_tests: {e}")
+        success = False
+
+    # Test apply_prompt_infra
+    print_subheader("Testing apply_prompt_infra")
+    try:
+        result = await apply_prompt_infra(
+            "Python 3.10, Poetry for dependency management, pytest for testing",
+            "Test specific instructions",
+        )
+        print(f"✅ apply_prompt_infra returned result of type: {type(result)}")
+        print(f"First 100 characters: {result[0].text[:100]}...")
+    except Exception as e:
+        print(f"❌ Error in apply_prompt_infra: {e}")
         success = False
 
     if success:

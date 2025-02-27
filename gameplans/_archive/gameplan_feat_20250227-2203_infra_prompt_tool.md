@@ -32,10 +32,10 @@ This game plan outlines the steps to implement a new tool called `apply_prompt_i
   - Create a new Tool instance for `apply_prompt_infra` in the `list_tools` function
 
 ### Stage 3: Testing
-- [ ] **Task 3.1: Add test for the new tool**
+- [x] **Task 3.1: Add test for the new tool**
   - Add a test for the `apply_prompt_infra` function in `test_final_verification.py`
   - Verify that the function returns the expected result
-- [ ] **Task 3.2: Manual testing**
+- [x] **Task 3.2: Manual testing**
   - Test the tool manually to ensure it works as expected
 
 ## Implementation Details
