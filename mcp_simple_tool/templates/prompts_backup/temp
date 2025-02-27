@@ -1,0 +1,9 @@
+This function becomes a "tool" in the MCP server context. See @https://blog.cloudflare.com/model-context-protocol/  for details on this.
+
+I might call/use this tool in the following manner:
+
+"""
+Please create a new MCP server tool in @server.py with the name `get_prompt_change` and use tool `get_prompt_initial` for it
+"""
+
+I wonder if it makes sense to add a function argument that explicitly deals with/handles the "ad hoc" part of my prompt. In the example from above, this would be this string: "Please create a new MCP server tool in @server.py with the name `get_prompt_change`"
