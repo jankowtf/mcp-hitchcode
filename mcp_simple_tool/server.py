@@ -288,6 +288,58 @@ async def get_prompt_fix(
     return [types.TextContent(type="text", text=response_text)]
 
 
+async def get_prompt_fix_linter(
+    issue: str,
+    specific_instructions: str = "",
+    version: str = "latest",
+) -> list[types.TextContent]:
+    """
+    Provides a prompt for analyzing and fixing linter errors.
+
+    Args:
+        issue: A description of the linter errors to be analyzed and fixed.
+        specific_instructions: Optional specific instructions to include in the prompt.
+        version: The version of the prompt template to use. Defaults to "latest".
+
+    Returns:
+        A list containing a TextContent object with the prompt.
+    """
+    # Render the prompt template with the issue and specific instructions
+    response_text = render_prompt_template(
+        "fix_linter_prompt",
+        version_str=version,
+        issue=issue,
+        specific_instructions=specific_instructions,
+    )
+    return [types.TextContent(type="text", text=response_text)]
+
+
+async def get_prompt_unit_tests(
+    code_to_test: str,
+    specific_instructions: str = "",
+    version: str = "latest",
+) -> list[types.TextContent]:
+    """
+    Provides a prompt for generating unit tests for code.
+
+    Args:
+        code_to_test: The code that needs unit tests.
+        specific_instructions: Optional specific instructions to include in the prompt.
+        version: The version of the prompt template to use. Defaults to "latest".
+
+    Returns:
+        A list containing a TextContent object with the prompt.
+    """
+    # Render the prompt template with the code to test and specific instructions
+    response_text = render_prompt_template(
+        "unit_tests_prompt",
+        version_str=version,
+        code_to_test=code_to_test,
+        specific_instructions=specific_instructions,
+    )
+    return [types.TextContent(type="text", text=response_text)]
+
+
 @click.command()
 @click.option("--port", default=8000, help="Port to listen on for SSE")
 @click.option(
@@ -386,6 +438,35 @@ def main(port: int, transport: str) -> int:
             specific_instructions = arguments.get("specific_instructions", "")
             return await get_prompt_change(
                 change_request=arguments["change_request"],
+                specific_instructions=specific_instructions,
+                version=version,
+            )
+        elif name == "get_prompt_fix_linter":
+            if "issue" not in arguments:
+                return [
+                    types.TextContent(
+                        type="text", text="Error: Missing required argument 'issue'"
+                    )
+                ]
+            version = arguments.get("version", "latest")
+            specific_instructions = arguments.get("specific_instructions", "")
+            return await get_prompt_fix_linter(
+                issue=arguments["issue"],
+                specific_instructions=specific_instructions,
+                version=version,
+            )
+        elif name == "get_prompt_unit_tests":
+            if "code_to_test" not in arguments:
+                return [
+                    types.TextContent(
+                        type="text",
+                        text="Error: Missing required argument 'code_to_test'",
+                    )
+                ]
+            version = arguments.get("version", "latest")
+            specific_instructions = arguments.get("specific_instructions", "")
+            return await get_prompt_unit_tests(
+                code_to_test=arguments["code_to_test"],
                 specific_instructions=specific_instructions,
                 version=version,
             )
@@ -525,6 +606,50 @@ def main(port: int, transport: str) -> int:
                         "change_request": {
                             "type": "string",
                             "description": "Description of the change request to implement",
+                        },
+                        "specific_instructions": {
+                            "type": "string",
+                            "description": "Optional specific instructions to include in the prompt",
+                        },
+                        "version": {
+                            "type": "string",
+                            "description": "The version of the prompt template to use (e.g., '1.0.0', '1.1.0', or 'latest')",
+                        },
+                    },
+                },
+            ),
+            types.Tool(
+                name="get_prompt_fix_linter",
+                description="Provides a prompt for analyzing and fixing linter errors",
+                inputSchema={
+                    "type": "object",
+                    "required": ["issue"],
+                    "properties": {
+                        "issue": {
+                            "type": "string",
+                            "description": "A description of the linter errors to be analyzed and fixed",
+                        },
+                        "specific_instructions": {
+                            "type": "string",
+                            "description": "Optional specific instructions to include in the prompt",
+                        },
+                        "version": {
+                            "type": "string",
+                            "description": "The version of the prompt template to use (e.g., '1.0.0', '1.1.0', or 'latest')",
+                        },
+                    },
+                },
+            ),
+            types.Tool(
+                name="get_prompt_unit_tests",
+                description="Provides a prompt for generating unit tests for code",
+                inputSchema={
+                    "type": "object",
+                    "required": ["code_to_test"],
+                    "properties": {
+                        "code_to_test": {
+                            "type": "string",
+                            "description": "The code that needs unit tests",
                         },
                         "specific_instructions": {
                             "type": "string",
