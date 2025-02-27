@@ -1,6 +1,6 @@
 ---
 version: 1.1.1
-created: 2025-02-29
+created: 2025-02-28
 description: Enhanced prompt template for starting a new project with improved compliance structures
 variables:
   - objective: Description of the objective of the project

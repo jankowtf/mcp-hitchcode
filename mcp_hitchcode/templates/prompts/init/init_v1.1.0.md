@@ -1,6 +1,6 @@
 ---
 version: 1.1.0
-created: 2025-02-27
+created: 2025-02-28
 description: Initial prompt template for starting a new project with enhanced compliance structures
 variables:
   - objective: Description of the overall objective
@@ -58,9 +58,7 @@ PERSISTENCE: PERMANENT UNTIL TASK COMPLETION
 
 2. CHECKPOINT #2: BEFORE GAME PLAN CREATION - You must request timestamp
    information from the user: "Please provide the current timestamp using 'date
-   +"%Y%m%d-%H%M"' and a brief ID for this game plan.". Propose a timestamp by
-   running the terminal command `date +"%Y%m%d-%H%M"` and use the output as the
-   ID.
+   +"%Y%m%d-%H%M"' and a brief ID for this game plan.".
 
 3. CHECKPOINT #3: AFTER GAME PLAN CREATION - You must present a summary of the game plan and ask: "I've created the game plan document. Should I proceed with implementing Stage 1, or would you like to make adjustments first?"
 
