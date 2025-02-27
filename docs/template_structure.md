@@ -7,7 +7,7 @@ This document describes the template structure used in the MCP Simple Tool.
 The templates are organized in the following directory structure:
 
 ```
-mcp_simple_tool/templates/prompts/
+mcp_hitchcode/templates/prompts/
 ├── change/
 ├── fix_general/
 ├── fix_linter/
@@ -39,7 +39,7 @@ Templates follow a consistent naming convention:
 Templates are loaded and rendered using the `render_prompt_template` function:
 
 ```python
-from mcp_simple_tool.templates.template_loader import render_prompt_template
+from mcp_hitchcode.templates.template_loader import render_prompt_template
 
 # Render a template
 response_text = render_prompt_template(
@@ -54,7 +54,7 @@ response_text = render_prompt_template(
 
 To add a new template:
 
-1. Create a new directory in `mcp_simple_tool/templates/prompts/` if needed
+1. Create a new directory in `mcp_hitchcode/templates/prompts/` if needed
 2. Create a template file with the naming pattern `{directory_name}_v{version}.md`
 3. Add YAML front matter with metadata if needed
 4. Implement the template content with Jinja2 syntax for variables

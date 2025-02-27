@@ -85,10 +85,10 @@ Start the server using either stdio (default) or SSE transport:
 uv pip install -e ".[dev]"
 
 # Using stdio transport (default)
-uv run mcp-simple-tool
+uv run mcp-hitchcode
 
 # Using SSE transport on custom port
-uv run mcp-simple-tool --transport sse --port 8000
+uv run mcp-hitchcode --transport sse --port 8000
 
 # Run tests
 uv run pytest -v

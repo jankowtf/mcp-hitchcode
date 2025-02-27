@@ -20,4 +20,4 @@ RUN pip install --no-cache-dir -e ".[dev]"
 EXPOSE 8000
 
 # Run the server with SSE transport
-CMD ["mcp-simple-tool", "--transport", "sse", "--port", "8000"] 
+CMD ["mcp-hitchcode", "--transport", "sse", "--port", "8000"] 

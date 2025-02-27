@@ -5,7 +5,7 @@ Test script for the template loader.
 This script tests the template loader's ability to load templates with the new naming pattern.
 """
 
-from mcp_simple_tool.templates.template_loader import (
+from mcp_hitchcode.templates.template_loader import (
     _build_version_registry,
     get_template_versions,
     render_prompt_template,

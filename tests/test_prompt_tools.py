@@ -9,7 +9,7 @@ from mcp.client.stdio import StdioServerParameters, stdio_client
 async def test_get_prompt_fix() -> None:
     """Test that the get_prompt_fix tool works correctly."""
     async with stdio_client(
-        StdioServerParameters(command="uv", args=["run", "mcp-simple-tool"])
+        StdioServerParameters(command="uv", args=["run", "mcp-hitchcode"])
     ) as (read, write):
         async with ClientSession(read, write) as session:
             await session.initialize()
@@ -47,7 +47,7 @@ async def test_get_prompt_fix() -> None:
 async def test_get_prompt_initial() -> None:
     """Test that the get_prompt_initial tool works correctly."""
     async with stdio_client(
-        StdioServerParameters(command="uv", args=["run", "mcp-simple-tool"])
+        StdioServerParameters(command="uv", args=["run", "mcp-hitchcode"])
     ) as (read, write):
         async with ClientSession(read, write) as session:
             await session.initialize()
@@ -87,7 +87,7 @@ async def test_get_prompt_initial() -> None:
 async def test_get_prompt_initial_version() -> None:
     """Test that the get_prompt_initial tool works with version parameter."""
     async with stdio_client(
-        StdioServerParameters(command="uv", args=["run", "mcp-simple-tool"])
+        StdioServerParameters(command="uv", args=["run", "mcp-hitchcode"])
     ) as (read, write):
         async with ClientSession(read, write) as session:
             await session.initialize()
@@ -110,7 +110,7 @@ async def test_get_prompt_initial_version() -> None:
 async def test_get_prompt_proceed() -> None:
     """Test that the get_prompt_proceed tool works correctly."""
     async with stdio_client(
-        StdioServerParameters(command="uv", args=["run", "mcp-simple-tool"])
+        StdioServerParameters(command="uv", args=["run", "mcp-hitchcode"])
     ) as (read, write):
         async with ClientSession(read, write) as session:
             await session.initialize()
@@ -150,7 +150,7 @@ async def test_get_prompt_proceed() -> None:
 async def test_get_prompt_proceed_version() -> None:
     """Test that the get_prompt_proceed tool works with version parameter."""
     async with stdio_client(
-        StdioServerParameters(command="uv", args=["run", "mcp-simple-tool"])
+        StdioServerParameters(command="uv", args=["run", "mcp-hitchcode"])
     ) as (read, write):
         async with ClientSession(read, write) as session:
             await session.initialize()
@@ -173,7 +173,7 @@ async def test_get_prompt_proceed_version() -> None:
 async def test_get_prompt_change() -> None:
     """Test that the get_prompt_change tool works correctly."""
     async with stdio_client(
-        StdioServerParameters(command="uv", args=["run", "mcp-simple-tool"])
+        StdioServerParameters(command="uv", args=["run", "mcp-hitchcode"])
     ) as (read, write):
         async with ClientSession(read, write) as session:
             await session.initialize()
@@ -213,7 +213,7 @@ async def test_get_prompt_change() -> None:
 async def test_get_prompt_change_version() -> None:
     """Test that the get_prompt_change tool works with version parameter."""
     async with stdio_client(
-        StdioServerParameters(command="uv", args=["run", "mcp-simple-tool"])
+        StdioServerParameters(command="uv", args=["run", "mcp-hitchcode"])
     ) as (read, write):
         async with ClientSession(read, write) as session:
             await session.initialize()

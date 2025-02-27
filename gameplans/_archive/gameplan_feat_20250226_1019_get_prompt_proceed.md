@@ -18,7 +18,7 @@ This game plan outlines the steps to implement a new tool called `get_prompt_pro
 
 ## Stage 2: Implementation
 - [x] **Task 2.1: Create the prompt template**
-  - Create a new directory `proceed_prompt` in `mcp_simple_tool/templates/prompts/`
+  - Create a new directory `proceed_prompt` in `mcp_hitchcode/templates/prompts/`
   - Create a template file `1.0.0.md` with appropriate YAML front matter and template content
   - The template should include sections for task description, agency, and maxims of action
 

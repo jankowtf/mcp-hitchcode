@@ -25,7 +25,7 @@ This game plan outlines the steps to implement a new tool called `get_prompt_ini
 ## Stage 2: Template Creation
 
 - [x] **Task 2.1: Create the template directory structure**
-  - Create a new directory `initial_prompt` under `mcp_simple_tool/templates/prompts/`
+  - Create a new directory `initial_prompt` under `mcp_hitchcode/templates/prompts/`
   - This will follow the same pattern as the existing `fix_prompt` directory
 
 - [x] **Task 2.2: Create the initial template version**
@@ -106,7 +106,7 @@ Project: {{ project }}
 ```
 
 ### Code Changes
-1. Create new template file(s) in `mcp_simple_tool/templates/prompts/initial_prompt/`
+1. Create new template file(s) in `mcp_hitchcode/templates/prompts/initial_prompt/`
 2. Add new async function `get_prompt_initial` in `server.py`
 3. Update `fetch_tool` function to handle the new tool
 4. Add the tool to the `list_tools` function

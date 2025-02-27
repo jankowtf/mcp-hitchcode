@@ -17,7 +17,7 @@ This game plan outlines the implementation of a new tool called `get_prompt_chan
 - [x] Ensure template follows the same structure as existing templates
 
 **Implementation Details:**
-- Create directory `mcp_simple_tool/templates/prompts/change_prompt`
+- Create directory `mcp_hitchcode/templates/prompts/change_prompt`
 - Create file `1.0.0.md` with YAML front matter including version, creation date, description, and variables
 - Template content should include sections for task description, agency instructions, and maxims of action
 - Variables should include `change_request` and `specific_instructions`

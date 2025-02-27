@@ -9,4 +9,4 @@ build:
     PYTHON_VERSION: "3.10.16"
 
 run:
-  web: mcp-simple-tool --transport sse --port $PORT 
+  web: mcp-hitchcode --transport sse --port $PORT 

@@ -9,7 +9,7 @@ from starlette.responses import JSONResponse
 from starlette.routing import Mount, Route
 
 # Use absolute import
-from mcp_simple_tool.templates.template_loader import render_prompt_template
+from mcp_hitchcode.templates.template_loader import render_prompt_template
 
 
 def serialize_content(content_list):

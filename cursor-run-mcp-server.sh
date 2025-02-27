@@ -4,4 +4,4 @@
 cd "$(dirname "$0")"
 
 # Run the server
-exec uv run mcp-simple-tool
+exec uv run mcp-hitchcode

@@ -13,7 +13,7 @@ import asyncio
 import os
 import sys
 
-from mcp_simple_tool.server import (
+from mcp_hitchcode.server import (
     get_prompt_change,
     get_prompt_fix,
     get_prompt_fix_linter,
@@ -21,7 +21,7 @@ from mcp_simple_tool.server import (
     get_prompt_proceed,
     get_prompt_unit_tests,
 )
-from mcp_simple_tool.templates.template_loader import (
+from mcp_hitchcode.templates.template_loader import (
     _build_version_registry,
     get_latest_version,
     get_template_versions,
@@ -51,7 +51,7 @@ def verify_directory_structure() -> bool:
     # This approach is more reliable than using relative paths
     templates_dir = os.path.join(
         os.path.dirname(os.path.abspath(__file__)),
-        "mcp_simple_tool",
+        "mcp_hitchcode",
         "templates",
         "prompts",
     )
@@ -61,7 +61,7 @@ def verify_directory_structure() -> bool:
         # Try to find the templates directory relative to the current working directory
         templates_dir = os.path.join(
             os.getcwd(),
-            "mcp_simple_tool",
+            "mcp_hitchcode",
             "templates",
             "prompts",
         )

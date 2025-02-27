@@ -14,7 +14,7 @@ This game plan outlines the steps to implement a templating system for the `get_
   - **Recommendation**: Jinja2 is the most appropriate choice due to its widespread adoption, excellent documentation, and powerful features
 
 - [x] **Task 1.2: Design the template directory structure**
-  - Create a `templates` directory within the `mcp_simple_tool` package
+  - Create a `templates` directory within the `mcp_hitchcode` package
   - Organize templates by tool or functionality
   - Ensure the structure is scalable for future template additions
 
@@ -103,7 +103,7 @@ This game plan outlines the steps to implement a templating system for the `get_
 
 ### Template Directory Structure
 ```
-mcp_simple_tool/
+mcp_hitchcode/
 ├── __init__.py
 ├── __main__.py
 ├── server.py
@@ -188,7 +188,7 @@ The template loader has been enhanced to:
 
 ### Template Directory Structure
 ```
-mcp_simple_tool/
+mcp_hitchcode/
 ├── __init__.py
 ├── __main__.py
 ├── server.py

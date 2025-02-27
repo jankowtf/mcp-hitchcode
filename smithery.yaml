@@ -25,4 +25,4 @@ startCommand:
   commandFunction:
     # A function that produces the CLI command to start the MCP on stdio.
     |-
-    (config) => ({ command: 'mcp-simple-tool', args: ['--transport', 'sse', '--port', String(config.mcpServerPort)], env: { MCP_SERVER_HOST: config.mcpServerHost, DEBUG: config.debug ? 'true' : 'false', MCP_USER_AGENT: config.mcpUserAgent || '' } })
+    (config) => ({ command: 'mcp-hitchcode', args: ['--transport', 'sse', '--port', String(config.mcpServerPort)], env: { MCP_SERVER_HOST: config.mcpServerHost, DEBUG: config.debug ? 'true' : 'false', MCP_USER_AGENT: config.mcpUserAgent || '' } })

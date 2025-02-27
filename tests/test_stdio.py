@@ -9,7 +9,7 @@ from mcp.client.stdio import StdioServerParameters, stdio_client
 async def test_mcp_server_tools() -> None:
     """Test that we can connect to the server and list available tools."""
     async with stdio_client(
-        StdioServerParameters(command="uv", args=["run", "mcp-simple-tool"])
+        StdioServerParameters(command="uv", args=["run", "mcp-hitchcode"])
     ) as (read, write):
         async with ClientSession(read, write) as session:
             await session.initialize()
@@ -22,7 +22,7 @@ async def test_mcp_server_tools() -> None:
 async def test_mcp_server_mood() -> None:
     """Test that the mood tool works correctly."""
     async with stdio_client(
-        StdioServerParameters(command="uv", args=["run", "mcp-simple-tool"])
+        StdioServerParameters(command="uv", args=["run", "mcp-hitchcode"])
     ) as (read, write):
         async with ClientSession(read, write) as session:
             await session.initialize()
