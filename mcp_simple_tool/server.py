@@ -236,32 +236,6 @@ async def get_prompt_proceed(
     return [types.TextContent(type="text", text=response_text)]
 
 
-async def get_prompt_fix(
-    issue: str,
-    specific_instructions: str = "",
-    version: str = "latest",
-) -> list[types.TextContent]:
-    """
-    Provides a prompt for performing root cause analysis and fixing issues.
-
-    Args:
-        issue: A description of the issue to be analyzed and fixed.
-        specific_instructions: Optional specific instructions to include in the prompt.
-        version: The version of the prompt template to use. Defaults to "latest".
-
-    Returns:
-        A list containing a TextContent object with the prompt.
-    """
-    # Render the prompt template with the issue and specific instructions
-    response_text = render_prompt_template(
-        "fix_prompt",
-        version_str=version,
-        issue=issue,
-        specific_instructions=specific_instructions,
-    )
-    return [types.TextContent(type="text", text=response_text)]
-
-
 async def get_prompt_change(
     change_request: str,
     specific_instructions: str = "",
@@ -283,6 +257,32 @@ async def get_prompt_change(
         "change_prompt",
         version_str=version,
         change_request=change_request,
+        specific_instructions=specific_instructions,
+    )
+    return [types.TextContent(type="text", text=response_text)]
+
+
+async def get_prompt_fix(
+    issue: str,
+    specific_instructions: str = "",
+    version: str = "latest",
+) -> list[types.TextContent]:
+    """
+    Provides a prompt for performing root cause analysis and fixing issues.
+
+    Args:
+        issue: A description of the issue to be analyzed and fixed.
+        specific_instructions: Optional specific instructions to include in the prompt.
+        version: The version of the prompt template to use. Defaults to "latest".
+
+    Returns:
+        A list containing a TextContent object with the prompt.
+    """
+    # Render the prompt template with the issue and specific instructions
+    response_text = render_prompt_template(
+        "fix_prompt",
+        version_str=version,
+        issue=issue,
         specific_instructions=specific_instructions,
     )
     return [types.TextContent(type="text", text=response_text)]
