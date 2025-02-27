@@ -115,10 +115,17 @@ def _build_version_registry() -> None:
         # Scan the template directory for version files
         version_files = []
         for filename in os.listdir(template_dir):
-            # Check if the filename matches a version pattern (e.g., 1.0.0.md)
+            # Check if the filename matches the old version pattern (e.g., 1.0.0.md)
             if re.match(r"^\d+\.\d+\.\d+\.md$", filename):
                 version_str = filename[:-3]  # Remove the .md extension
                 version_files.append((version_str, filename))
+            # Check if the filename matches the new version pattern (e.g., change_v1.0.0.md)
+            elif re.match(r"^[a-z_]+_v\d+\.\d+\.\d+\.md$", filename):
+                # Extract the version from the filename (e.g., "1.0.0" from "change_v1.0.0.md")
+                match = re.search(r"_v(\d+\.\d+\.\d+)\.md$", filename)
+                if match:
+                    version_str = match.group(1)
+                    version_files.append((version_str, filename))
 
         # Sort the version files by version number (newest first)
         version_files.sort(key=lambda x: version.parse(x[0]), reverse=True)
@@ -305,8 +312,11 @@ def render_prompt_template(
             # If no suitable version is found, use the oldest version
             version_str = available_versions[-1]
 
+    # Get the filename from the registry
+    filename = _version_registry[template_name][version_str]
+
     # Build the template path
-    template_path = f"prompts/{template_name}/{version_str}.md"
+    template_path = f"prompts/{template_name}/{filename}"
 
     # Load the template content
     content = load_template(template_path)

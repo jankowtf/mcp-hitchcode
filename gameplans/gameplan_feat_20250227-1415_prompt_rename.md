@@ -29,19 +29,19 @@ This game plan outlines the steps to rename the prompt folders and update the te
 
 ## Stage 2: Update Template Loader
 
-- [ ] **Task 2.1: Modify the template loader to handle the new filename pattern**
+- [x] **Task 2.1: Modify the template loader to handle the new filename pattern**
   - Update the `_build_version_registry` function to recognize the new filename pattern
   - The current pattern is `^\d+\.\d+\.\d+\.md$` (e.g., `1.0.0.md`)
   - The new pattern should be `^[a-z_]+_v\d+\.\d+\.\d+\.md$` (e.g., `change_v1.0.0.md`)
   - This change is critical to ensure the template loader can find and load the templates
 
-- [ ] **Task 2.2: Update the version extraction logic**
+- [x] **Task 2.2: Update the version extraction logic**
   - Modify how version strings are extracted from filenames
   - Currently, it removes the `.md` extension to get the version
   - The new logic needs to extract the version from the `_v1.0.0.md` format
   - This ensures version comparison and selection work correctly
 
-- [ ] **Task 2.3: Test the updated template loader**
+- [x] **Task 2.3: Test the updated template loader**
   - Create test files with the new naming pattern
   - Verify that the template loader can correctly identify and load these files
   - This testing is crucial before proceeding with the actual migration
