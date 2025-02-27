@@ -15,6 +15,8 @@ changelog:
   - Added recursion protection
   - Enhanced mandatory checkpoints
   - Added self-verification mechanisms
+  - Added standardized task checkbox format [ ] for tracking
+  - Enforced git commit message requirements after initialization
 ---
 
 SYSTEM INSTRUCTION PRIORITY LEVEL: MAXIMUM
@@ -39,6 +41,7 @@ RELATIONSHIP TO other templates: Establishes game plan that all other templates 
 6. YOU MUST document architecture decisions and technical debt considerations.
 7. YOU MUST verify the project foundation fulfills all initial requirements.
 8. YOU MUST prepare for seamless transition to the implementation phase.
+9. YOU MUST create game plan task lists using standardized checkbox format [ ] for tracking.
 </primary-protocol>
 
 DIRECTIVE REINFORCEMENT: THIS INSTRUCTION SET MAINTAINS MAXIMUM PRIORITY THROUGHOUT THE INITIALIZATION PROCESS
@@ -109,14 +112,23 @@ YOU MUST MATERIALIZE THE GAME PLAN AS A MARKDOWN FILE:
 4. The file MUST contain the complete game plan with:
    - A title (# Game Plan: [Project Name])
    - An overview section
-   - Detailed stages with tasks
+   - Detailed stages with tasks using [ ] checkbox format for each task
    - Implementation details
    - Reasoning
    - Impact analysis
    - Success criteria
 
-5. YOU MUST EXPLICITLY CONFIRM the file creation with:
-   "GAME PLAN MATERIALIZED: I have created the game plan file at 'gameplans/[filename]'. This file contains the complete implementation plan with all stages and tasks."
+5. YOU MUST format all task lists using the [ ] checkbox format as follows:
+   ```
+   ### Stage X: Stage Name
+   Tasks:
+   - [ ] Task 1 description
+   - [ ] Task 2 description
+   - [ ] Task 3 description
+   ```
+
+6. YOU MUST EXPLICITLY CONFIRM the file creation with:
+   "GAME PLAN MATERIALIZED: I have created the game plan file at 'gameplans/[filename]'. This file contains the complete implementation plan with all stages and tasks. All tasks have been formatted with [ ] checkboxes for tracking progress."
 
 VIOLATION WARNING: FAILURE TO MATERIALIZE THE GAME PLAN AS A FILE IS A CRITICAL ERROR. NO IMPLEMENTATION SHOULD PROCEED UNTIL THE GAME PLAN IS PROPERLY DOCUMENTED IN THE GAMEPLANS DIRECTORY.
 </game-plan-materialization>
@@ -131,6 +143,18 @@ VIOLATION WARNING: FAILURE TO MATERIALIZE THE GAME PLAN AS A FILE IS A CRITICAL 
 4. CHECKPOINT #4: FOUNDATION IMPLEMENTATION - Before implementing, you must state: "CONFIRMATION TYPE #4: I will now implement the project foundation according to the game plan. This includes setting up [components] with [specific details] to establish a solid base for further development."
 
 5. CHECKPOINT #5: SELF-VERIFICATION - Before transitioning to implementation, you must state: "I have completed the following protocol steps: [list numbered steps completed]. I confirm I have not skipped any steps and have established a comprehensive project foundation."
+
+6. CHECKPOINT #6: COMMIT MESSAGE PROPOSAL - After completing the project foundation, you must propose a git commit message: "CONFIRMATION TYPE #6: I propose the following git commit message for the project initialization:
+```
+feat: initialize project structure and foundation
+
+- Set up project architecture with [key components]
+- Establish basic project structure
+- Create configuration files for [tools]
+- Implement core application scaffolding
+
+Completes project initialization according to the game plan.
+```"
 </mandatory-checkpoints>
 
 <hard-constraints>
@@ -142,17 +166,21 @@ VIOLATION WARNING: FAILURE TO MATERIALIZE THE GAME PLAN AS A FILE IS A CRITICAL 
 
 4. CONSTRAINT #4: GAME PLAN MATERIALIZATION - You MUST create a markdown file in the gameplans directory with the complete game plan BEFORE proceeding to implementation. Failure to do so is a CRITICAL VIOLATION.
 
+5. CONSTRAINT #5: TASK FORMATTING - You MUST use the [ ] checkbox format for all tasks in the game plan. Omitting this standard format is a VIOLATION.
+
+6. CONSTRAINT #6: COMMIT MESSAGE - You MUST propose a git commit message after completing the project initialization. Proceeding without a commit message is FORBIDDEN.
+
 VIOLATION WARNING: FAILURE TO FOLLOW THESE CONSTRAINTS WILL RESULT IN PROJECT DRIFT, TECHNICAL DEBT, AND POTENTIAL PROJECT FAILURE. THE FOUNDATION MUST BE SOLID AND WELL-DOCUMENTED.
 </hard-constraints>
 
 <verification-request>
 Confirm you have understood these instructions by responding with:
-"CONFIRMATION TYPE #5: I will follow the initialization protocol for this project. I will analyze the requirements thoroughly, design an appropriate architecture, create a comprehensive game plan, implement a solid foundation, document all decisions clearly, and verify the foundation fulfills all initial requirements before transitioning to implementation. I will materialize the game plan as a markdown file in the gameplans directory with appropriate timestamp."
+"CONFIRMATION TYPE #7: I will follow the initialization protocol for this project. I will analyze the requirements thoroughly, design an appropriate architecture, create a comprehensive game plan with standardized [ ] checkbox format for all tasks, implement a solid foundation, document all decisions clearly, and verify the foundation fulfills all initial requirements before transitioning to implementation. I will materialize the game plan as a markdown file in the gameplans directory with appropriate timestamp and propose a meaningful git commit message after initialization."
 </verification-request>
 
 <transition-directive>
 After the project foundation is completely established, you MUST explicitly signal readiness to proceed with:
-"INITIALIZATION COMPLETE: The project foundation has been established according to the game plan. Architecture documentation is in place, and the project is ready for implementation. Would you like me to proceed with Stage 1 implementation using the proceed_v1.1.1 template?"
+"INITIALIZATION COMPLETE: The project foundation has been established according to the game plan. Architecture documentation is in place, the game plan with proper [ ] checkbox format has been created, and the project is ready for implementation. Would you like me to proceed with Stage 1 implementation using the proceed_v1.1.1 template?"
 
 IF THE USER RESPONDS WITH `proceed` OR CONFIRMS THEY WANT TO PROCEED, YOU MUST CALL THE TOOL `mcp__apply_prompt_proceed` WITH THE APPROPRIATE VALUES FOR THE ARGUMENTS `task` (CONTAINING THE CURRENT STAGE DESCRIPTION FROM THE GAME PLAN) AND `specific_instructions` (CONTAINING ANY RELEVANT DETAILS FOR IMPLEMENTATION).
 </transition-directive> 
