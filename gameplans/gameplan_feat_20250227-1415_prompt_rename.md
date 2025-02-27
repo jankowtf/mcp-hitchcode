@@ -64,16 +64,16 @@ This game plan outlines the steps to rename the prompt folders and update the te
 
 ## Stage 4: Update Code References
 
-- [ ] **Task 4.1: Update references in server.py**
+- [x] **Task 4.1: Update references in server.py**
   - Update all references to the old template names in the `server.py` file
   - This includes the `render_prompt_template` calls in the various `get_prompt_*` functions
   - These changes ensure the code uses the new template names
 
-- [ ] **Task 4.2: Update any other code references**
+- [x] **Task 4.2: Update any other code references**
   - Search for and update any other references to the template names in the codebase
   - This ensures all parts of the application use the new template names
 
-- [ ] **Task 4.3: Test the updated code**
+- [x] **Task 4.3: Test the updated code**
   - Run the application and test each prompt tool
   - Verify that all templates are correctly loaded and rendered
   - This testing ensures the changes haven't broken any functionality

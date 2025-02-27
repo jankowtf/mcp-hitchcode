@@ -202,7 +202,7 @@ async def get_prompt_initial(
     """
     # Render the prompt template with the project description and specific instructions
     response_text = render_prompt_template(
-        "initial_prompt",
+        "init",
         version_str=version,
         project=project,
         specific_instructions=specific_instructions,
@@ -228,7 +228,7 @@ async def get_prompt_proceed(
     """
     # Render the prompt template with the task description and specific instructions
     response_text = render_prompt_template(
-        "proceed_prompt",
+        "proceed",
         version_str=version,
         task=task,
         specific_instructions=specific_instructions,
@@ -254,7 +254,7 @@ async def get_prompt_change(
     """
     # Render the prompt template with the change request and specific instructions
     response_text = render_prompt_template(
-        "change_prompt",
+        "change",
         version_str=version,
         change_request=change_request,
         specific_instructions=specific_instructions,
@@ -280,7 +280,7 @@ async def get_prompt_fix(
     """
     # Render the prompt template with the issue and specific instructions
     response_text = render_prompt_template(
-        "fix_prompt",
+        "fix_general",
         version_str=version,
         issue=issue,
         specific_instructions=specific_instructions,
@@ -306,7 +306,7 @@ async def get_prompt_fix_linter(
     """
     # Render the prompt template with the issue and specific instructions
     response_text = render_prompt_template(
-        "fix_linter_prompt",
+        "fix_linter",
         version_str=version,
         issue=issue,
         specific_instructions=specific_instructions,
@@ -332,7 +332,7 @@ async def get_prompt_unit_tests(
     """
     # Render the prompt template with the code to test and specific instructions
     response_text = render_prompt_template(
-        "unit_tests_prompt",
+        "test",
         version_str=version,
         code_to_test=code_to_test,
         specific_instructions=specific_instructions,
