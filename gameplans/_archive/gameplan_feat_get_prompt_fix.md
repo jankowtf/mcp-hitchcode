@@ -1,7 +1,7 @@
-# Game Plan: Implementing `get_prompt_fix` Tool
+# Game Plan: Implementing `apply_prompt_fix` Tool
 
 ## Overview
-This game plan outlines the steps to implement a new tool called `get_prompt_fix` in the MCP server. The tool will provide a specific prompt to the agent for performing root cause analysis and fixing issues.
+This game plan outlines the steps to implement a new tool called `apply_prompt_fix` in the MCP server. The tool will provide a specific prompt to the agent for performing root cause analysis and fixing issues.
 
 ## Stage 1: Analysis and Design
 
@@ -11,13 +11,13 @@ This game plan outlines the steps to implement a new tool called `get_prompt_fix
   - Tools are registered using decorators on the Server instance
   - Each tool has a name, description, and input schema
 
-- [x] **Task 1.2: Design the `get_prompt_fix` tool**
+- [x] **Task 1.2: Design the `apply_prompt_fix` tool**
   - **Function signature**: The tool will be an async function that returns a list of TextContent
   - **Input parameters**: The tool should accept issue descriptions or context
   - **Return value**: The tool will return the predefined prompt as TextContent
 
 - [x] **Task 1.3: Define the tool schema**
-  - **Name**: `get_prompt_fix`
+  - **Name**: `apply_prompt_fix`
   - **Description**: "Provides a prompt for performing root cause analysis and fixing issues"
   - **Input Schema**: Will require an "issue" parameter to describe the problem
 
@@ -25,18 +25,18 @@ This game plan outlines the steps to implement a new tool called `get_prompt_fix
 
 ## Stage 2: Implementation
 
-- [x] **Task 2.1: Implement the `get_prompt_fix` function**
+- [x] **Task 2.1: Implement the `apply_prompt_fix` function**
   - Create an async function that returns the predefined prompt
   - Format the prompt as TextContent
   - Ensure the prompt is properly formatted and preserved
 
 - [x] **Task 2.2: Register the tool in the `fetch_tool` function**
-  - Add a new condition to handle the `get_prompt_fix` tool
+  - Add a new condition to handle the `apply_prompt_fix` tool
   - Extract the "issue" parameter from the arguments
   - Call the implemented function with the issue parameter
 
 - [x] **Task 2.3: Add the tool to the `list_tools` function**
-  - Create a new Tool instance for `get_prompt_fix`
+  - Create a new Tool instance for `apply_prompt_fix`
   - Define the input schema with the required "issue" parameter
   - Add a clear description of the tool's purpose
 
@@ -92,7 +92,7 @@ You never just proceed with implementing stages of the game plan, you always ask
 ```
 
 ### Technical Approach
-1. We'll create a new async function `get_prompt_fix` that accepts an issue parameter
+1. We'll create a new async function `apply_prompt_fix` that accepts an issue parameter
 2. The function will return the predefined prompt as TextContent
 3. We'll update the `fetch_tool` function to handle the new tool
 4. We'll add the tool to the `list_tools` function with appropriate schema

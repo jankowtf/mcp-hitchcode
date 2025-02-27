@@ -1,16 +1,16 @@
-# Game Plan: Implementing `get_prompt_proceed` Tool
+# Game Plan: Implementing `apply_prompt_proceed` Tool
 
 ## Overview
-This game plan outlines the steps to implement a new tool called `get_prompt_proceed` in the MCP server. The tool will provide a prompt template for proceeding with a task or project, similar to the existing `get_prompt_initial` and `get_prompt_fix` tools. This implementation will follow the same pattern as the existing tools, leveraging the template loader mechanism.
+This game plan outlines the steps to implement a new tool called `apply_prompt_proceed` in the MCP server. The tool will provide a prompt template for proceeding with a task or project, similar to the existing `apply_prompt_initial` and `apply_prompt_fix` tools. This implementation will follow the same pattern as the existing tools, leveraging the template loader mechanism.
 
 ## Stage 1: Analysis and Design
 - [x] **Task 1.1: Understand the existing prompt tools**
-  - Review how the `get_prompt_initial` and `get_prompt_fix` tools are implemented
+  - Review how the `apply_prompt_initial` and `apply_prompt_fix` tools are implemented
   - Understand how the template loader mechanism works
   
-- [x] **Task 1.2: Design the `get_prompt_proceed` tool**
+- [x] **Task 1.2: Design the `apply_prompt_proceed` tool**
   - **Purpose**: Provide a prompt template for proceeding with a task or project
-  - **Name**: `get_prompt_proceed`
+  - **Name**: `apply_prompt_proceed`
   - **Parameters**:
     - `task`: A description of the task or project to proceed with
     - `version`: The version of the prompt template to use (optional, defaults to "latest")
@@ -22,17 +22,17 @@ This game plan outlines the steps to implement a new tool called `get_prompt_pro
   - Create a template file `1.0.0.md` with appropriate YAML front matter and template content
   - The template should include sections for task description, agency, and maxims of action
 
-- [x] **Task 2.2: Implement the `get_prompt_proceed` function**
-  - Add a new async function `get_prompt_proceed` in `server.py`
+- [x] **Task 2.2: Implement the `apply_prompt_proceed` function**
+  - Add a new async function `apply_prompt_proceed` in `server.py`
   - The function should accept `task` and `version` parameters
   - Use the `render_prompt_template` function to render the template
 
 - [x] **Task 2.3: Update the tool handler**
-  - Add a new condition to handle the `get_prompt_proceed` tool in the `fetch_tool` function
+  - Add a new condition to handle the `apply_prompt_proceed` tool in the `fetch_tool` function
   - Check for the required `task` parameter and handle the optional `version` parameter
 
 - [x] **Task 2.4: Register the tool**
-  - Create a new Tool instance for `get_prompt_proceed` in the `list_tools` function
+  - Create a new Tool instance for `apply_prompt_proceed` in the `list_tools` function
   - Define the input schema with the required and optional parameters
   - Provide a clear description of the tool's purpose
 
@@ -55,9 +55,9 @@ The template should follow the same structure as the existing templates, with YA
 2. A section for agency (what the agent should do)
 3. A section for maxims of action (guidelines for the agent)
 
-### Task 2.2: Implement the `get_prompt_proceed` function
+### Task 2.2: Implement the `apply_prompt_proceed` function
 ```python
-async def get_prompt_proceed(
+async def apply_prompt_proceed(
     task: str,
     version: str = "latest",
 ) -> list[types.TextContent]:
@@ -81,7 +81,7 @@ async def get_prompt_proceed(
 ### Task 2.3: Update the tool handler
 Add a new condition to the `fetch_tool` function:
 ```python
-elif name == "get_prompt_proceed":
+elif name == "apply_prompt_proceed":
     if "task" not in arguments:
         return [
             types.TextContent(
@@ -89,14 +89,14 @@ elif name == "get_prompt_proceed":
             )
         ]
     version = arguments.get("version", "latest")
-    return await get_prompt_proceed(arguments["task"], version=version)
+    return await apply_prompt_proceed(arguments["task"], version=version)
 ```
 
 ### Task 2.4: Register the tool
 Add a new Tool instance to the `list_tools` function:
 ```python
 types.Tool(
-    name="get_prompt_proceed",
+    name="apply_prompt_proceed",
     description="Provides a prompt template for proceeding with a task or project",
     inputSchema={
         "type": "object",

@@ -1,7 +1,7 @@
-# Game Plan: Implementing Templating System for `get_prompt_fix` Tool
+# Game Plan: Implementing Templating System for `apply_prompt_fix` Tool
 
 ## Overview
-This game plan outlines the steps to implement a templating system for the `get_prompt_fix` tool in the MCP server. The goal is to decouple prompt content from the tool implementation by using a best-in-class templating framework and storing templates in separate files.
+This game plan outlines the steps to implement a templating system for the `apply_prompt_fix` tool in the MCP server. The goal is to decouple prompt content from the tool implementation by using a best-in-class templating framework and storing templates in separate files.
 
 ## Stage 1: Analysis and Design
 
@@ -40,7 +40,7 @@ This game plan outlines the steps to implement a templating system for the `get_
   - Ensure the directory is included in the package distribution
 
 - [x] **Task 2.2: Create the prompt template file**
-  - Create a template file for the `get_prompt_fix` tool
+  - Create a template file for the `apply_prompt_fix` tool
   - Convert the existing prompt to the template format
   - Add appropriate variables and placeholders
 
@@ -49,7 +49,7 @@ This game plan outlines the steps to implement a templating system for the `get_
   - Implement functions to load and render templates
   - Add error handling for missing templates
 
-- [x] **Task 2.4: Update the `get_prompt_fix` function**
+- [x] **Task 2.4: Update the `apply_prompt_fix` function**
   - Modify the function to use the template system
   - Pass the issue parameter to the template renderer
   - Ensure the output format remains compatible with the MCP system
@@ -63,7 +63,7 @@ This game plan outlines the steps to implement a templating system for the `get_
   - Test error handling for missing or invalid templates
   - Ensure template caching works as expected
 
-- [x] **Task 3.2: Test the `get_prompt_fix` function**
+- [x] **Task 3.2: Test the `apply_prompt_fix` function**
   - Verify that the function correctly renders the template
   - Test with various issue descriptions
   - Ensure the output format is compatible with the MCP system

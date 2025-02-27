@@ -184,33 +184,33 @@ async def fetch_railway_docs_optimized(
         ]
 
 
-async def get_prompt_initial(
-    project: str,
+async def apply_prompt_initial(
+    objective: str,
     specific_instructions: str = "",
     version: str = "latest",
 ) -> list[types.TextContent]:
     """
-    Provides an initial prompt template for starting a new project.
+    Provides an initial prompt template for starting a new coding objective.
 
     Args:
-        project: A description of the project to start.
+        objective: A description of the overall objective.
         specific_instructions: Optional specific instructions to include in the prompt.
         version: The version of the prompt template to use. Defaults to "latest".
 
     Returns:
         A list containing a TextContent object with the prompt.
     """
-    # Render the prompt template with the project description and specific instructions
+    # Render the prompt template with the objective and specific instructions
     response_text = render_prompt_template(
         "init",
         version_str=version,
-        project=project,
+        objective=objective,
         specific_instructions=specific_instructions,
     )
     return [types.TextContent(type="text", text=response_text)]
 
 
-async def get_prompt_proceed(
+async def apply_prompt_proceed(
     task: str,
     specific_instructions: str = "",
     version: str = "latest",
@@ -236,7 +236,7 @@ async def get_prompt_proceed(
     return [types.TextContent(type="text", text=response_text)]
 
 
-async def get_prompt_change(
+async def apply_prompt_change(
     change_request: str,
     specific_instructions: str = "",
     version: str = "latest",
@@ -262,7 +262,7 @@ async def get_prompt_change(
     return [types.TextContent(type="text", text=response_text)]
 
 
-async def get_prompt_fix(
+async def apply_prompt_fix(
     issue: str,
     specific_instructions: str = "",
     version: str = "latest",
@@ -288,7 +288,7 @@ async def get_prompt_fix(
     return [types.TextContent(type="text", text=response_text)]
 
 
-async def get_prompt_fix_linter(
+async def apply_prompt_fix_linter(
     issue: str,
     specific_instructions: str = "",
     version: str = "latest",
@@ -314,7 +314,7 @@ async def get_prompt_fix_linter(
     return [types.TextContent(type="text", text=response_text)]
 
 
-async def get_prompt_unit_tests(
+async def apply_prompt_unit_tests(
     code_to_test: str,
     specific_instructions: str = "",
     version: str = "latest",
@@ -335,6 +335,32 @@ async def get_prompt_unit_tests(
         "test",
         version_str=version,
         code_to_test=code_to_test,
+        specific_instructions=specific_instructions,
+    )
+    return [types.TextContent(type="text", text=response_text)]
+
+
+async def apply_prompt_infra(
+    infrastructure_info: str,
+    specific_instructions: str = "",
+    version: str = "latest",
+) -> list[types.TextContent]:
+    """
+    Provides a prompt template for laying out system infrastructure and tool stack information.
+
+    Args:
+        infrastructure_info: Description of the infrastructure and tool stack.
+        specific_instructions: Optional specific instructions to include in the prompt.
+        version: The version of the prompt template to use. Defaults to "latest".
+
+    Returns:
+        A list containing a TextContent object with the prompt.
+    """
+    # Render the prompt template with the infrastructure info and specific instructions
+    response_text = render_prompt_template(
+        "infra",
+        version_str=version,
+        infrastructure_info=infrastructure_info,
         specific_instructions=specific_instructions,
     )
     return [types.TextContent(type="text", text=response_text)]
@@ -384,7 +410,7 @@ def main(port: int, transport: str) -> int:
         if name == "fetch_railway_docs_optimized":
             url = arguments.get("url", "https://docs.railway.app/guides/cli")
             return await fetch_railway_docs_optimized(url)
-        elif name == "get_prompt_fix":
+        elif name == "apply_prompt_fix":
             if "issue" not in arguments:
                 return [
                     types.TextContent(
@@ -393,26 +419,26 @@ def main(port: int, transport: str) -> int:
                 ]
             version = arguments.get("version", "latest")
             specific_instructions = arguments.get("specific_instructions", "")
-            return await get_prompt_fix(
+            return await apply_prompt_fix(
                 issue=arguments["issue"],
                 specific_instructions=specific_instructions,
                 version=version,
             )
-        elif name == "get_prompt_initial":
-            if "project" not in arguments:
+        elif name == "apply_prompt_initial":
+            if "objective" not in arguments:
                 return [
                     types.TextContent(
-                        type="text", text="Error: Missing required argument 'project'"
+                        type="text", text="Error: Missing required argument 'objective'"
                     )
                 ]
             version = arguments.get("version", "latest")
             specific_instructions = arguments.get("specific_instructions", "")
-            return await get_prompt_initial(
-                arguments["project"],
+            return await apply_prompt_initial(
+                objective=arguments["objective"],
                 specific_instructions=specific_instructions,
                 version=version,
             )
-        elif name == "get_prompt_proceed":
+        elif name == "apply_prompt_proceed":
             if "task" not in arguments:
                 return [
                     types.TextContent(
@@ -421,12 +447,12 @@ def main(port: int, transport: str) -> int:
                 ]
             version = arguments.get("version", "latest")
             specific_instructions = arguments.get("specific_instructions", "")
-            return await get_prompt_proceed(
+            return await apply_prompt_proceed(
                 arguments["task"],
                 specific_instructions=specific_instructions,
                 version=version,
             )
-        elif name == "get_prompt_change":
+        elif name == "apply_prompt_change":
             if "change_request" not in arguments:
                 return [
                     types.TextContent(
@@ -436,12 +462,12 @@ def main(port: int, transport: str) -> int:
                 ]
             version = arguments.get("version", "latest")
             specific_instructions = arguments.get("specific_instructions", "")
-            return await get_prompt_change(
+            return await apply_prompt_change(
                 change_request=arguments["change_request"],
                 specific_instructions=specific_instructions,
                 version=version,
             )
-        elif name == "get_prompt_fix_linter":
+        elif name == "apply_prompt_fix_linter":
             if "issue" not in arguments:
                 return [
                     types.TextContent(
@@ -450,12 +476,12 @@ def main(port: int, transport: str) -> int:
                 ]
             version = arguments.get("version", "latest")
             specific_instructions = arguments.get("specific_instructions", "")
-            return await get_prompt_fix_linter(
+            return await apply_prompt_fix_linter(
                 issue=arguments["issue"],
                 specific_instructions=specific_instructions,
                 version=version,
             )
-        elif name == "get_prompt_unit_tests":
+        elif name == "apply_prompt_unit_tests":
             if "code_to_test" not in arguments:
                 return [
                     types.TextContent(
@@ -465,8 +491,23 @@ def main(port: int, transport: str) -> int:
                 ]
             version = arguments.get("version", "latest")
             specific_instructions = arguments.get("specific_instructions", "")
-            return await get_prompt_unit_tests(
+            return await apply_prompt_unit_tests(
                 code_to_test=arguments["code_to_test"],
+                specific_instructions=specific_instructions,
+                version=version,
+            )
+        elif name == "apply_prompt_infra":
+            if "infrastructure_info" not in arguments:
+                return [
+                    types.TextContent(
+                        type="text",
+                        text="Error: Missing required argument 'infrastructure_info'",
+                    )
+                ]
+            version = arguments.get("version", "latest")
+            specific_instructions = arguments.get("specific_instructions", "")
+            return await apply_prompt_infra(
+                infrastructure_info=arguments["infrastructure_info"],
                 specific_instructions=specific_instructions,
                 version=version,
             )
@@ -531,7 +572,7 @@ def main(port: int, transport: str) -> int:
                 },
             ),
             types.Tool(
-                name="get_prompt_fix",
+                name="apply_prompt_fix",
                 description="Provides a prompt for performing root cause analysis and fixing issues",
                 inputSchema={
                     "type": "object",
@@ -553,15 +594,15 @@ def main(port: int, transport: str) -> int:
                 },
             ),
             types.Tool(
-                name="get_prompt_initial",
+                name="apply_prompt_initial",
                 description="Provides an initial prompt template for starting a new project",
                 inputSchema={
                     "type": "object",
-                    "required": ["project"],
+                    "required": ["objective"],
                     "properties": {
-                        "project": {
+                        "objective": {
                             "type": "string",
-                            "description": "A description of the project to start",
+                            "description": "A description of the objective of the project",
                         },
                         "specific_instructions": {
                             "type": "string",
@@ -575,7 +616,7 @@ def main(port: int, transport: str) -> int:
                 },
             ),
             types.Tool(
-                name="get_prompt_proceed",
+                name="apply_prompt_proceed",
                 description="Provides a prompt template for proceeding with a task or project",
                 inputSchema={
                     "type": "object",
@@ -597,7 +638,7 @@ def main(port: int, transport: str) -> int:
                 },
             ),
             types.Tool(
-                name="get_prompt_change",
+                name="apply_prompt_change",
                 description="Provides a prompt for systematically handling change requests",
                 inputSchema={
                     "type": "object",
@@ -619,7 +660,7 @@ def main(port: int, transport: str) -> int:
                 },
             ),
             types.Tool(
-                name="get_prompt_fix_linter",
+                name="apply_prompt_fix_linter",
                 description="Provides a prompt for analyzing and fixing linter errors",
                 inputSchema={
                     "type": "object",
@@ -641,7 +682,7 @@ def main(port: int, transport: str) -> int:
                 },
             ),
             types.Tool(
-                name="get_prompt_unit_tests",
+                name="apply_prompt_unit_tests",
                 description="Provides a prompt for generating unit tests for code",
                 inputSchema={
                     "type": "object",
@@ -650,6 +691,28 @@ def main(port: int, transport: str) -> int:
                         "code_to_test": {
                             "type": "string",
                             "description": "The code that needs unit tests",
+                        },
+                        "specific_instructions": {
+                            "type": "string",
+                            "description": "Optional specific instructions to include in the prompt",
+                        },
+                        "version": {
+                            "type": "string",
+                            "description": "The version of the prompt template to use (e.g., '1.0.0', '1.1.0', or 'latest')",
+                        },
+                    },
+                },
+            ),
+            types.Tool(
+                name="apply_prompt_infra",
+                description="Provides a prompt template for laying out system infrastructure and tool stack information",
+                inputSchema={
+                    "type": "object",
+                    "required": ["infrastructure_info"],
+                    "properties": {
+                        "infrastructure_info": {
+                            "type": "string",
+                            "description": "Description of the infrastructure and tool stack",
                         },
                         "specific_instructions": {
                             "type": "string",

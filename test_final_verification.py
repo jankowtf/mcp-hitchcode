@@ -14,12 +14,12 @@ import os
 import sys
 
 from mcp_hitchcode.server import (
-    get_prompt_change,
-    get_prompt_fix,
-    get_prompt_fix_linter,
-    get_prompt_initial,
-    get_prompt_proceed,
-    get_prompt_unit_tests,
+    apply_prompt_change,
+    apply_prompt_fix,
+    apply_prompt_fix_linter,
+    apply_prompt_initial,
+    apply_prompt_proceed,
+    apply_prompt_unit_tests,
 )
 from mcp_hitchcode.templates.template_loader import (
     _build_version_registry,
@@ -194,68 +194,72 @@ async def verify_server_functions() -> bool:
 
     success = True
 
-    # Test get_prompt_initial
-    print_subheader("Testing get_prompt_initial")
+    # Test apply_prompt_initial
+    print_subheader("Testing apply_prompt_initial")
     try:
-        result = await get_prompt_initial("Test project", "Test specific instructions")
-        print(f"✅ get_prompt_initial returned result of type: {type(result)}")
+        result = await apply_prompt_initial(
+            "Test project", "Test specific instructions"
+        )
+        print(f"✅ apply_prompt_initial returned result of type: {type(result)}")
         print(f"First 100 characters: {result[0].text[:100]}...")
     except Exception as e:
-        print(f"❌ Error in get_prompt_initial: {e}")
+        print(f"❌ Error in apply_prompt_initial: {e}")
         success = False
 
-    # Test get_prompt_proceed
-    print_subheader("Testing get_prompt_proceed")
+    # Test apply_prompt_proceed
+    print_subheader("Testing apply_prompt_proceed")
     try:
-        result = await get_prompt_proceed("Test task", "Test specific instructions")
-        print(f"✅ get_prompt_proceed returned result of type: {type(result)}")
+        result = await apply_prompt_proceed("Test task", "Test specific instructions")
+        print(f"✅ apply_prompt_proceed returned result of type: {type(result)}")
         print(f"First 100 characters: {result[0].text[:100]}...")
     except Exception as e:
-        print(f"❌ Error in get_prompt_proceed: {e}")
+        print(f"❌ Error in apply_prompt_proceed: {e}")
         success = False
 
-    # Test get_prompt_change
-    print_subheader("Testing get_prompt_change")
+    # Test apply_prompt_change
+    print_subheader("Testing apply_prompt_change")
     try:
-        result = await get_prompt_change(
+        result = await apply_prompt_change(
             "Test change request", "Test specific instructions"
         )
-        print(f"✅ get_prompt_change returned result of type: {type(result)}")
+        print(f"✅ apply_prompt_change returned result of type: {type(result)}")
         print(f"First 100 characters: {result[0].text[:100]}...")
     except Exception as e:
-        print(f"❌ Error in get_prompt_change: {e}")
+        print(f"❌ Error in apply_prompt_change: {e}")
         success = False
 
-    # Test get_prompt_fix
-    print_subheader("Testing get_prompt_fix")
+    # Test apply_prompt_fix
+    print_subheader("Testing apply_prompt_fix")
     try:
-        result = await get_prompt_fix("Test issue", "Test specific instructions")
-        print(f"✅ get_prompt_fix returned result of type: {type(result)}")
+        result = await apply_prompt_fix("Test issue", "Test specific instructions")
+        print(f"✅ apply_prompt_fix returned result of type: {type(result)}")
         print(f"First 100 characters: {result[0].text[:100]}...")
     except Exception as e:
-        print(f"❌ Error in get_prompt_fix: {e}")
+        print(f"❌ Error in apply_prompt_fix: {e}")
         success = False
 
-    # Test get_prompt_fix_linter
-    print_subheader("Testing get_prompt_fix_linter")
+    # Test apply_prompt_fix_linter
+    print_subheader("Testing apply_prompt_fix_linter")
     try:
-        result = await get_prompt_fix_linter("Test issue", "Test specific instructions")
-        print(f"✅ get_prompt_fix_linter returned result of type: {type(result)}")
+        result = await apply_prompt_fix_linter(
+            "Test issue", "Test specific instructions"
+        )
+        print(f"✅ apply_prompt_fix_linter returned result of type: {type(result)}")
         print(f"First 100 characters: {result[0].text[:100]}...")
     except Exception as e:
-        print(f"❌ Error in get_prompt_fix_linter: {e}")
+        print(f"❌ Error in apply_prompt_fix_linter: {e}")
         success = False
 
-    # Test get_prompt_unit_tests
-    print_subheader("Testing get_prompt_unit_tests")
+    # Test apply_prompt_unit_tests
+    print_subheader("Testing apply_prompt_unit_tests")
     try:
-        result = await get_prompt_unit_tests(
+        result = await apply_prompt_unit_tests(
             "def test(): pass", "Test specific instructions"
         )
-        print(f"✅ get_prompt_unit_tests returned result of type: {type(result)}")
+        print(f"✅ apply_prompt_unit_tests returned result of type: {type(result)}")
         print(f"First 100 characters: {result[0].text[:100]}...")
     except Exception as e:
-        print(f"❌ Error in get_prompt_unit_tests: {e}")
+        print(f"❌ Error in apply_prompt_unit_tests: {e}")
         success = False
 
     if success:

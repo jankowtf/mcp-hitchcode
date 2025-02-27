@@ -1,22 +1,22 @@
-# Game Plan: Implementing `get_prompt_initial` Tool
+# Game Plan: Implementing `apply_prompt_initial` Tool
 
 ## Overview
-This game plan outlines the steps to implement a new tool called `get_prompt_initial` in the MCP server. The tool will provide an initial prompt template to the agent, similar to the existing `get_prompt_fix` tool. This implementation will follow the same pattern as the existing tool, leveraging the template loader mechanism.
+This game plan outlines the steps to implement a new tool called `apply_prompt_initial` in the MCP server. The tool will provide an initial prompt template to the agent, similar to the existing `apply_prompt_fix` tool. This implementation will follow the same pattern as the existing tool, leveraging the template loader mechanism.
 
 ## Stage 1: Analysis and Design
 
 - [x] **Task 1.1: Understand the existing template loader mechanism**
   - Review the `template_loader.py` file to understand how templates are loaded and rendered
-  - Understand how the `get_prompt_fix` tool uses the template loader
+  - Understand how the `apply_prompt_fix` tool uses the template loader
   - Identify the necessary components for implementing a new template-based tool
 
-- [x] **Task 1.2: Design the `get_prompt_initial` tool**
+- [x] **Task 1.2: Design the `apply_prompt_initial` tool**
   - **Function signature**: The tool will be an async function that returns a list of TextContent
   - **Input parameters**: The tool should accept a project description and optional version parameter
   - **Return value**: The tool will return the rendered prompt template as TextContent
 
 - [x] **Task 1.3: Define the tool schema**
-  - **Name**: `get_prompt_initial`
+  - **Name**: `apply_prompt_initial`
   - **Description**: "Provides an initial prompt template for starting a new project"
   - **Input Schema**: Will require a "project" parameter to describe the project and an optional "version" parameter
 
@@ -42,18 +42,18 @@ This game plan outlines the steps to implement a new tool called `get_prompt_ini
 
 ## Stage 3: Tool Implementation
 
-- [x] **Task 3.1: Implement the `get_prompt_initial` function**
+- [x] **Task 3.1: Implement the `apply_prompt_initial` function**
   - Create an async function that accepts project description and version parameters
   - Use the `render_prompt_template` function to render the template
   - Return the rendered template as TextContent
 
 - [x] **Task 3.2: Register the tool in the `fetch_tool` function**
-  - Add a new condition to handle the `get_prompt_initial` tool
+  - Add a new condition to handle the `apply_prompt_initial` tool
   - Extract the "project" and optional "version" parameters from the arguments
   - Call the implemented function with the extracted parameters
 
 - [x] **Task 3.3: Add the tool to the `list_tools` function**
-  - Create a new Tool instance for `get_prompt_initial`
+  - Create a new Tool instance for `apply_prompt_initial`
   - Define the input schema with the required "project" parameter and optional "version" parameter
   - Add a clear description of the tool's purpose
 
@@ -82,7 +82,7 @@ This game plan outlines the steps to implement a new tool called `get_prompt_ini
 
 ### Technical Approach
 1. We'll create a new template directory and file following the existing pattern
-2. We'll implement a new async function `get_prompt_initial` that accepts project and version parameters
+2. We'll implement a new async function `apply_prompt_initial` that accepts project and version parameters
 3. The function will use the existing `render_prompt_template` function to render the template
 4. We'll update the `fetch_tool` function to handle the new tool
 5. We'll add the tool to the `list_tools` function with appropriate schema
@@ -107,7 +107,7 @@ Project: {{ project }}
 
 ### Code Changes
 1. Create new template file(s) in `mcp_hitchcode/templates/prompts/initial_prompt/`
-2. Add new async function `get_prompt_initial` in `server.py`
+2. Add new async function `apply_prompt_initial` in `server.py`
 3. Update `fetch_tool` function to handle the new tool
 4. Add the tool to the `list_tools` function
 

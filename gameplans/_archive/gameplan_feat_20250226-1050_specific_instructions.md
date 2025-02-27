@@ -10,12 +10,12 @@ This game plan outlines the steps to extend all prompt templates (`proceed_promp
   - Determine how to handle empty specific instructions gracefully
 
 - [x] **Task 1.2: Design the implementation approach**
-  - Design the updated function signatures for all `get_prompt_*` functions
+  - Design the updated function signatures for all `apply_prompt_*` functions
   - Plan how to maintain backward compatibility
   - Determine how to update the templates to include the new section
 
-## Stage 2: Implementation for `get_prompt_proceed`
-- [x] **Task 2.1: Update the `get_prompt_proceed` function**
+## Stage 2: Implementation for `apply_prompt_proceed`
+- [x] **Task 2.1: Update the `apply_prompt_proceed` function**
   - Add a new optional parameter `specific_instructions` with empty string as default
   - Update the function to pass the new parameter to the template renderer
   - Ensure backward compatibility is maintained
@@ -28,15 +28,15 @@ This game plan outlines the steps to extend all prompt templates (`proceed_promp
 - [x] **Task 2.3: Update the tool handler for proceed_prompt**
   - Modify the `fetch_tool` function to handle the new parameter
   - Extract the optional `specific_instructions` parameter from arguments
-  - Pass the parameter to the `get_prompt_proceed` function
+  - Pass the parameter to the `apply_prompt_proceed` function
 
 - [x] **Task 2.4: Update the tool registration for proceed_prompt**
   - Update the tool schema in the `list_tools` function
   - Add the new parameter to the input schema
   - Provide a clear description for the parameter
 
-## Stage 3: Implementation for `get_prompt_initial`
-- [x] **Task 3.1: Update the `get_prompt_initial` function**
+## Stage 3: Implementation for `apply_prompt_initial`
+- [x] **Task 3.1: Update the `apply_prompt_initial` function**
   - Add a new optional parameter `specific_instructions` with empty string as default
   - Update the function to pass the new parameter to the template renderer
   - Ensure backward compatibility is maintained
@@ -49,15 +49,15 @@ This game plan outlines the steps to extend all prompt templates (`proceed_promp
 - [x] **Task 3.3: Update the tool handler for initial_prompt**
   - Modify the `fetch_tool` function to handle the new parameter
   - Extract the optional `specific_instructions` parameter from arguments
-  - Pass the parameter to the `get_prompt_initial` function
+  - Pass the parameter to the `apply_prompt_initial` function
 
 - [x] **Task 3.4: Update the tool registration for initial_prompt**
   - Update the tool schema in the `list_tools` function
   - Add the new parameter to the input schema
   - Provide a clear description for the parameter
 
-## Stage 4: Implementation for `get_prompt_fix`
-- [x] **Task 4.1: Update the `get_prompt_fix` function**
+## Stage 4: Implementation for `apply_prompt_fix`
+- [x] **Task 4.1: Update the `apply_prompt_fix` function**
   - Add a new optional parameter `specific_instructions` with empty string as default
   - Update the function to pass the new parameter to the template renderer
   - Ensure backward compatibility is maintained
@@ -70,7 +70,7 @@ This game plan outlines the steps to extend all prompt templates (`proceed_promp
 - [x] **Task 4.3: Update the tool handler for fix_prompt**
   - Modify the `fetch_tool` function to handle the new parameter
   - Extract the optional `specific_instructions` parameter from arguments
-  - Pass the parameter to the `get_prompt_fix` function
+  - Pass the parameter to the `apply_prompt_fix` function
 
 - [x] **Task 4.4: Update the tool registration for fix_prompt**
   - Update the tool schema in the `list_tools` function
@@ -89,9 +89,9 @@ This game plan outlines the steps to extend all prompt templates (`proceed_promp
 
 ## Implementation Details
 
-### Task 2.1: Update the `get_prompt_proceed` function
+### Task 2.1: Update the `apply_prompt_proceed` function
 ```python
-async def get_prompt_proceed(
+async def apply_prompt_proceed(
     task: str,
     specific_instructions: str = "",  # New optional parameter
     version: str = "latest",
@@ -117,9 +117,9 @@ async def get_prompt_proceed(
     return [types.TextContent(type="text", text=response_text)]
 ```
 
-### Task 3.1: Update the `get_prompt_initial` function
+### Task 3.1: Update the `apply_prompt_initial` function
 ```python
-async def get_prompt_initial(
+async def apply_prompt_initial(
     project: str,
     specific_instructions: str = "",  # New optional parameter
     version: str = "latest",
@@ -145,9 +145,9 @@ async def get_prompt_initial(
     return [types.TextContent(type="text", text=response_text)]
 ```
 
-### Task 4.1: Update the `get_prompt_fix` function
+### Task 4.1: Update the `apply_prompt_fix` function
 ```python
-async def get_prompt_fix(
+async def apply_prompt_fix(
     issue: str,
     specific_instructions: str = "",  # New optional parameter
     version: str = "latest",
@@ -184,7 +184,7 @@ For each template, add the `<specific-instructions>` section:
 ### Tool Handler Updates
 Update the `fetch_tool` function for each prompt tool:
 ```python
-elif name == "get_prompt_proceed":
+elif name == "apply_prompt_proceed":
     if "task" not in arguments:
         return [
             types.TextContent(
@@ -193,12 +193,12 @@ elif name == "get_prompt_proceed":
         ]
     version = arguments.get("version", "latest")
     specific_instructions = arguments.get("specific_instructions", "")
-    return await get_prompt_proceed(
+    return await apply_prompt_proceed(
         arguments["task"], 
         specific_instructions=specific_instructions,
         version=version
     )
-elif name == "get_prompt_initial":
+elif name == "apply_prompt_initial":
     if "project" not in arguments:
         return [
             types.TextContent(
@@ -207,12 +207,12 @@ elif name == "get_prompt_initial":
         ]
     version = arguments.get("version", "latest")
     specific_instructions = arguments.get("specific_instructions", "")
-    return await get_prompt_initial(
+    return await apply_prompt_initial(
         arguments["project"], 
         specific_instructions=specific_instructions,
         version=version
     )
-elif name == "get_prompt_fix":
+elif name == "apply_prompt_fix":
     if "issue" not in arguments:
         return [
             types.TextContent(
@@ -221,7 +221,7 @@ elif name == "get_prompt_fix":
         ]
     version = arguments.get("version", "latest")
     specific_instructions = arguments.get("specific_instructions", "")
-    return await get_prompt_fix(
+    return await apply_prompt_fix(
         arguments["issue"], 
         specific_instructions=specific_instructions,
         version=version
@@ -232,7 +232,7 @@ elif name == "get_prompt_fix":
 Update the tool schema in the `list_tools` function for each prompt tool:
 ```python
 types.Tool(
-    name="get_prompt_proceed",
+    name="apply_prompt_proceed",
     description="Provides a prompt template for proceeding with a task or project",
     inputSchema={
         "type": "object",

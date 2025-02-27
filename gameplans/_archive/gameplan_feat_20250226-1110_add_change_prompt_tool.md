@@ -1,4 +1,4 @@
-# Game Plan: Add `get_prompt_change` Tool
+# Game Plan: Add `apply_prompt_change` Tool
 
 **Date**: 2025-02-26
 **Time**: 11:10
@@ -6,7 +6,7 @@
 
 ## Overview
 
-This game plan outlines the implementation of a new tool called `get_prompt_change` for systematically handling change requests in our MCP server. The tool will provide a prompt template similar to the existing ones (initial_prompt, proceed_prompt, fix_prompt) but specifically designed for change requests.
+This game plan outlines the implementation of a new tool called `apply_prompt_change` for systematically handling change requests in our MCP server. The tool will provide a prompt template similar to the existing ones (initial_prompt, proceed_prompt, fix_prompt) but specifically designed for change requests.
 
 ## Stages
 
@@ -24,11 +24,11 @@ This game plan outlines the implementation of a new tool called `get_prompt_chan
 
 ### Stage 2: Implement the server-side function ✅
 
-- [x] Add a new async function `get_prompt_change` to handle the tool
+- [x] Add a new async function `apply_prompt_change` to handle the tool
 - [x] Ensure it follows the same pattern as existing prompt functions
 
 **Implementation Details:**
-- Add function `get_prompt_change` to `server.py` with parameters for change_request, specific_instructions, and version
+- Add function `apply_prompt_change` to `server.py` with parameters for change_request, specific_instructions, and version
 - Function should call `render_prompt_template` with appropriate parameters
 - Add proper docstring and type hints
 
@@ -39,7 +39,7 @@ This game plan outlines the implementation of a new tool called `get_prompt_chan
 
 **Implementation Details:**
 - Add new `types.Tool` entry in the `list_tools` function with appropriate name, description, and input schema
-- Add condition in the `fetch_tool` function to handle the "get_prompt_change" tool name
+- Add condition in the `fetch_tool` function to handle the "apply_prompt_change" tool name
 - Ensure proper error handling for missing required arguments
 
 ### Stage 4: Test the implementation ✅

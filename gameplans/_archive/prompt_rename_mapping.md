@@ -68,8 +68,8 @@ The following files contain references to the old template names and may need to
    - `gameplans/_archive/gameplan_feat_20250226-1110_add_change_prompt_tool.md`
    - `gameplans/_archive/gameplan_feat_20250227-1200_unit-tests-tool.md`
    - `gameplans/_archive/gameplan_feat_20250226-1050_specific_instructions.md`
-   - `gameplans/_archive/gameplan_feat_20250226_1019_get_prompt_proceed.md`
-   - `gameplans/_archive/gameplan_feat_get_prompt_initial.md`
+   - `gameplans/_archive/gameplan_feat_20250226_1019_apply_prompt_proceed.md`
+   - `gameplans/_archive/gameplan_feat_apply_prompt_initial.md`
    - `gameplans/_archive/gameplan_20250226-0900_prompt_templating.md`
 
 Note: Since these are archive files documenting past changes, they don't need to be updated as they represent historical documentation. 

@@ -7,6 +7,8 @@ variables:
   - specific_instructions: Optional specific instructions to include in the prompt
 ---
 
+
+
 Task: {{ task }}
 
 <your-task>

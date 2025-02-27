@@ -2,6 +2,7 @@
 version: 1.0.0
 description: Template for fixing linter errors
 ---
+
 Issue: {{ issue }}
 
 <your-task>

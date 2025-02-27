@@ -1,7 +1,7 @@
-# Game Plan: Implement `get_prompt_unit_tests` Tool
+# Game Plan: Implement `apply_prompt_unit_tests` Tool
 
 ## Overview
-This game plan outlines the steps to implement a new tool called `get_prompt_unit_tests` in the MCP Simple Tool server. This tool will provide a prompt template for generating unit tests, similar to the existing prompt tools.
+This game plan outlines the steps to implement a new tool called `apply_prompt_unit_tests` in the MCP Simple Tool server. This tool will provide a prompt template for generating unit tests, similar to the existing prompt tools.
 
 ## Stage 1: Create the Prompt Template
 - [x] Create a new prompt template file `1.0.0.md` in the `unit_tests_prompt` directory
@@ -22,7 +22,7 @@ This game plan outlines the steps to implement a new tool called `get_prompt_uni
 - The template will include guidance on writing effective unit tests using pytest
 
 ## Stage 2: Implement the Tool Function
-- [x] Add a new async function `get_prompt_unit_tests` in server.py
+- [x] Add a new async function `apply_prompt_unit_tests` in server.py
 - [x] Implement the function to render the prompt template using `render_prompt_template`
 - [x] Add proper documentation and type hints
 - [x] Include parameters:
@@ -36,7 +36,7 @@ This game plan outlines the steps to implement a new tool called `get_prompt_uni
 - It will return a list containing a TextContent object with the rendered prompt
 
 ## Stage 3: Register the Tool in the Server
-- [x] Add a new condition in the `fetch_tool` function to handle the "get_prompt_unit_tests" tool
+- [x] Add a new condition in the `fetch_tool` function to handle the "apply_prompt_unit_tests" tool
 - [x] Add proper error handling for missing required arguments
 - [x] Add the tool to the list of tools in the `list_tools` function with appropriate:
   - name
