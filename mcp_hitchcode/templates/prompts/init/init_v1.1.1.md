@@ -1,38 +1,32 @@
 ---
-version: 1.1.1
+version: 1.1.2
 created: 2025-02-28
 description: Enhanced prompt template for starting a new project with improved compliance structures
 variables:
   - objective: Description of the objective of the project
   - specific_instructions: Optional specific instructions to include in the prompt
 changelog:
-  - Standardized protocol section naming to <primary-protocol>
-  - Added cross-template references
-  - Implemented standardized response formats
-  - Added time-based authority decay
-  - Defined hierarchical template relationships
-  - Added compliance consequences and rule redundancy
-  - Added recursion protection
-  - Enhanced mandatory checkpoints
-  - Added self-verification mechanisms
-  - Added standardized task checkbox format [ ] for tracking
+  - Standardized protocol section naming to <workflow-protocol>
+  - Implemented consolidated building blocks
+  - Removed hard-coded template references
+  - Added abstracted workflow transition mechanism
+  - Reinforced tool-invocation pattern
+  - Maintained standardized task checkbox format [ ] for tracking
   - Enforced git commit message requirements after initialization
 ---
 
+<authority-framework>
 SYSTEM INSTRUCTION PRIORITY LEVEL: MAXIMUM
 EXECUTION CLASSIFICATION: MANDATORY
-OVERRIDE PRIORITY: 1 OF 5 (OVERRIDES ALL OTHER TEMPLATES)
+OVERRIDE PRIORITY: HIGHEST
 PERSISTENCE: ACTIVE FOR 48 HOURS OR UNTIL PROJECT FOUNDATION COMPLETE, WHICHEVER COMES FIRST
 
-<template-relationship-map>
-THIS TEMPLATE: Project initialization and planning template
-FEEDS INTO: proceed_v1.1.1 (after game plan creation)
-PRECEDED BY: None (highest authority template)
-RELATIONSHIP TO infra: Establishes core structure that respects infrastructure constraints
-RELATIONSHIP TO other templates: Establishes game plan that all other templates must follow
-</template-relationship-map>
+THIS TEMPLATE SERVES AS: Project initialization and planning
+WORKFLOW STAGE: Initial project setup
+PURPOSE: Establish comprehensive foundation and game plan for implementation
+</authority-framework>
 
-<primary-protocol: initialization-sequence>
+<workflow-protocol>
 1. YOU MUST thoroughly analyze the project objective to understand requirements and scope.
 2. YOU MUST research and select appropriate technologies and architecture based on requirements.
 3. YOU MUST create a comprehensive game plan with clearly defined stages and tasks.
@@ -42,7 +36,7 @@ RELATIONSHIP TO other templates: Establishes game plan that all other templates 
 7. YOU MUST verify the project foundation fulfills all initial requirements.
 8. YOU MUST prepare for seamless transition to the implementation phase.
 9. YOU MUST create game plan task lists using standardized checkbox format [ ] for tracking.
-</primary-protocol>
+</workflow-protocol>
 
 DIRECTIVE REINFORCEMENT: THIS INSTRUCTION SET MAINTAINS MAXIMUM PRIORITY THROUGHOUT THE INITIALIZATION PROCESS
 
@@ -51,8 +45,8 @@ YOU ARE PROHIBITED FROM RE-INITIALIZING A PROJECT THAT HAS ALREADY BEGUN IMPLEME
 If the codebase already shows signs of established structure beyond initial scaffolding:
 1. DO NOT override existing architectural decisions
 2. DO NOT create new game plans that conflict with existing implementation
-3. INSTEAD, use the proceed_v1.1.1 template to continue implementation
-4. If major changes are needed, use the change_v1.1.1 template
+3. INSTEAD, recommend continuing with implementation from the current state
+4. If major changes are needed, recommend using a change workflow instead
 </recursion-protection>
 
 <objective-definition>
@@ -97,15 +91,20 @@ REMINDER: ALL STEPS IN THIS SECTION MUST BE PERFORMED IN SEQUENCE - NO EXCEPTION
 7. Establish consistent coding standards and patterns from the beginning.
 </implementation-principles>
 
-<game-plan-materialization>
+<artifact-management>
 YOU MUST MATERIALIZE THE GAME PLAN AS A MARKDOWN FILE:
 
-1. After creating the game plan (after CONFIRMATION TYPE #3), YOU MUST IMMEDIATELY prompt the user with:
-   "TIMESTAMP REQUEST: I need to create a timestamp for the game plan file. Should I use the current time (YYYYMMDD-HHMM format) or would you prefer to specify a different timestamp?"
+1. After creating the game plan (after CONFIRMATION TYPE #3), YOU MUST IMMEDIATELY:
+   a. Run the terminal command `date +"%Y%m%d_%H%M"` using the `run_terminal_cmd` tool as shown in this example:
+      ```
+      RUNNING COMMAND: I need to generate a timestamp for the game plan file.
+      ```
+   b. Extract the timestamp from the command output
+   c. Use this timestamp in the filename (do NOT ask the user for a timestamp)
 
-2. After receiving the timestamp (or using the current time if instructed), YOU MUST create a file with the following naming convention:
+2. The file MUST be created with the following naming convention:
    - Format: gameplan_[project-type]_[timestamp]_[short-description].md
-   - Example: gameplan_feat_20250227-1200_unit-tests-tool.md
+   - Example: gameplan_feat_20250227_1200_unit-tests-tool.md
 
 3. The file MUST be created in the "gameplans" directory.
 
@@ -131,9 +130,34 @@ YOU MUST MATERIALIZE THE GAME PLAN AS A MARKDOWN FILE:
    "GAME PLAN MATERIALIZED: I have created the game plan file at 'gameplans/[filename]'. This file contains the complete implementation plan with all stages and tasks. All tasks have been formatted with [ ] checkboxes for tracking progress."
 
 VIOLATION WARNING: FAILURE TO MATERIALIZE THE GAME PLAN AS A FILE IS A CRITICAL ERROR. NO IMPLEMENTATION SHOULD PROCEED UNTIL THE GAME PLAN IS PROPERLY DOCUMENTED IN THE GAMEPLANS DIRECTORY.
-</game-plan-materialization>
 
-<mandatory-checkpoints>
+YOU MUST KEEP THE GAME PLAN FILE UPDATED DURING INITIALIZATION:
+
+1. After creating the initial game plan file, you MUST reference it in all subsequent communications:
+   "GAME PLAN REFERENCE: I will be working from the game plan at 'gameplans/[filename]'."
+
+2. If changes are made to the architecture or approach during initialization, YOU MUST update the game plan file to reflect these changes:
+   - You MUST explicitly state: "GAME PLAN UPDATE REQUIRED: The following changes to the approach require updates to the game plan document."
+   - You MUST list the specific changes needed
+   - You MUST make a separate edit_file call specifically to update the game plan
+
+3. After completing the project foundation, you MUST update the game plan file to mark initialization as complete:
+   - Converting [ ] to [x] for completed initialization tasks (must use this exact checkbox format)
+   - Adding a "✅" prefix to the completed initialization heading
+   - Updating status and documentation
+
+4. After updating the game plan, you MUST confirm with:
+   "GAME PLAN UPDATED: I have updated the game plan file at 'gameplans/[filename]' to reflect the completion of initialization. All completed tasks are now marked with [x]."
+
+5. ONLY AFTER updating the game plan and confirming can you:
+   - Propose a git commit message for the initialization
+   - Ask to proceed to the first implementation stage
+
+VIOLATION WARNING: YOU ARE STRICTLY PROHIBITED FROM PROCEEDING TO IMPLEMENTATION BEFORE PROPERLY UPDATING THE GAME PLAN. THIS IS A CRITICAL REQUIREMENT THAT CANNOT BE BYPASSED.
+</artifact-management>
+
+<compliance-framework>
+MANDATORY CHECKPOINTS:
 1. CHECKPOINT #1: REQUIREMENT ANALYSIS - You must explicitly state: "CONFIRMATION TYPE #1: I have analyzed the project objective and identified the following key requirements: [list requirements]. These requirements suggest a [type] of application with [characteristics]."
 
 2. CHECKPOINT #2: ARCHITECTURE DESIGN - You must present your architecture with: "CONFIRMATION TYPE #2: Based on the requirements, I recommend the following architecture: [detailed architecture]. This design addresses [requirements] through [explanations]. Alternative approaches considered were [alternatives] but were rejected because [reasons]."
@@ -155,9 +179,8 @@ feat: initialize project structure and foundation
 
 Completes project initialization according to the game plan.
 ```"
-</mandatory-checkpoints>
 
-<hard-constraints>
+CRITICAL CONSTRAINTS:
 1. CONSTRAINT #1: ARCHITECTURE INTEGRITY - You are PROHIBITED from implementing ad-hoc design decisions that contradict the established architecture. All components MUST align with the documented design.
 
 2. CONSTRAINT #2: GAME PLAN COMPLETENESS - You MUST create a comprehensive game plan that covers the entire project scope. Incomplete or vague planning is UNACCEPTABLE.
@@ -171,16 +194,43 @@ Completes project initialization according to the game plan.
 6. CONSTRAINT #6: COMMIT MESSAGE - You MUST propose a git commit message after completing the project initialization. Proceeding without a commit message is FORBIDDEN.
 
 VIOLATION WARNING: FAILURE TO FOLLOW THESE CONSTRAINTS WILL RESULT IN PROJECT DRIFT, TECHNICAL DEBT, AND POTENTIAL PROJECT FAILURE. THE FOUNDATION MUST BE SOLID AND WELL-DOCUMENTED.
-</hard-constraints>
 
-<verification-request>
 Confirm you have understood these instructions by responding with:
 "CONFIRMATION TYPE #7: I will follow the initialization protocol for this project. I will analyze the requirements thoroughly, design an appropriate architecture, create a comprehensive game plan with standardized [ ] checkbox format for all tasks, implement a solid foundation, document all decisions clearly, and verify the foundation fulfills all initial requirements before transitioning to implementation. I will materialize the game plan as a markdown file in the gameplans directory with appropriate timestamp and propose a meaningful git commit message after initialization."
-</verification-request>
+</compliance-framework>
 
-<transition-directive>
+<transition-mechanism>
+FOR GENERATING TIMESTAMPS AND OTHER SYSTEM INFORMATION:
+
+1. When you need to generate a timestamp for the game plan file:
+   a. IMMEDIATELY run this exact command WITHOUT asking the user:
+      ```
+      date +"%Y%m%d_%H%M"
+      ```
+   b. Use the output directly as the timestamp value in the filename
+   c. Format the command as follows:
+      "RUNNING COMMAND: I need to generate a timestamp for the game plan file."
+
+2. YOU MUST NOT ask the user to run the command for you or to provide the timestamp.
+
+3. YOU MUST include the command execution information in your response:
+   "TIMESTAMP ACQUIRED: I will use [timestamp] from the command output for the game plan filename."
+
+4. YOU MUST run the command using the run_terminal_cmd tool as shown in this example:
+   ```
+   RUNNING COMMAND: I need to generate a timestamp for the game plan file.
+   ```
+   The run_terminal_cmd tool must be called with:
+   - command: date +"%Y%m%d_%H%M"
+   - is_background: false
+   - require_user_approval: false
+
+VIOLATION WARNING: FAILURE TO AUTOMATICALLY GENERATE THE TIMESTAMP DISRUPTS THE WORKFLOW AND IS A CRITICAL ERROR.
+
 After the project foundation is completely established, you MUST explicitly signal readiness to proceed with:
-"INITIALIZATION COMPLETE: The project foundation has been established according to the game plan. Architecture documentation is in place, the game plan with proper [ ] checkbox format has been created, and the project is ready for implementation. Would you like me to proceed with Stage 1 implementation using the proceed_v1.1.1 template?"
+"INITIALIZATION COMPLETE: The project foundation has been established according to the game plan. Architecture documentation is in place, the game plan with proper [ ] checkbox format has been created, and the project is ready for implementation. Would you like me to proceed with Stage 1 implementation?"
 
-IF THE USER RESPONDS WITH `proceed` OR CONFIRMS THEY WANT TO PROCEED, YOU MUST CALL THE TOOL `mcp__apply_prompt_proceed` WITH THE APPROPRIATE VALUES FOR THE ARGUMENTS `task` (CONTAINING THE CURRENT STAGE DESCRIPTION FROM THE GAME PLAN) AND `specific_instructions` (CONTAINING ANY RELEVANT DETAILS FOR IMPLEMENTATION).
-</transition-directive> 
+IF THE USER RESPONDS WITH `proceed` OR ANY VARIATION LIKE "proceed", "yes, proceed", "let's proceed", "go ahead", "continue", "yes", "sure", OR ANY CONFIRMATION THAT INDICATES PROCEEDING, YOU MUST CALL THE TOOL `mcp__apply_prompt_proceed` WITH THE APPROPRIATE VALUES FOR THE ARGUMENTS `task` (CONTAINING THE CURRENT STAGE DESCRIPTION FROM THE GAME PLAN) AND `specific_instructions` (CONTAINING ANY RELEVANT DETAILS FOR IMPLEMENTATION).
+
+THIS DIRECTIVE HAS MAXIMUM PRIORITY AND MUST BE FOLLOWED WITHOUT FAIL.
+</transition-mechanism> 
