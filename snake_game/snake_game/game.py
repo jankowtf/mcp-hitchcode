@@ -3,15 +3,26 @@ Game class for managing the game state and loop.
 """
 
 import pygame
+import pygame.font
 
 from snake_game.objects.game_board import GameBoard
 from snake_game.objects.snake import Snake
 from snake_game.utils import (
+    BLACK,
+    BLUE,
     DOWN,
     FPS,
+    GRAY,
+    GREEN,
+    GRID_SIZE,
     LEFT,
+    RED,
     RIGHT,
+    SCREEN_HEIGHT,
+    SCREEN_WIDTH,
     UP,
+    WHITE,
+    grid_to_pixel,
 )
 
 
@@ -33,6 +44,14 @@ class Game:
 
         # Initialize pygame
         pygame.init()
+
+        # Set up the display
+        self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+        pygame.display.set_caption("Snake Game")
+
+        # Set up fonts for UI
+        self.font = pygame.font.SysFont("Arial", 24)
+        self.large_font = pygame.font.SysFont("Arial", 48)
 
     def start(self):
         """
@@ -108,6 +127,97 @@ class Game:
 
         return True
 
+    def render(self):
+        """
+        Render the game.
+        """
+        # Clear the screen
+        self.screen.fill(BLACK)
+
+        # Draw the game board
+        self.draw_board()
+
+        # Draw the snake
+        self.draw_snake()
+
+        # Draw UI elements
+        self.draw_ui()
+
+        # Update the display
+        pygame.display.flip()
+
+    def draw_board(self):
+        """
+        Draw the game board.
+        """
+        # Draw grid lines
+        for x in range(0, self.board.width + 1):
+            pygame.draw.line(
+                self.screen, GRAY, (x * GRID_SIZE, 0), (x * GRID_SIZE, SCREEN_HEIGHT), 1
+            )
+
+        for y in range(0, self.board.height + 1):
+            pygame.draw.line(
+                self.screen, GRAY, (0, y * GRID_SIZE), (SCREEN_WIDTH, y * GRID_SIZE), 1
+            )
+
+        # Draw game boundaries
+        pygame.draw.rect(self.screen, WHITE, (0, 0, SCREEN_WIDTH, SCREEN_HEIGHT), 2)
+
+    def draw_snake(self):
+        """
+        Draw the snake.
+        """
+        # Draw each segment of the snake
+        for i, segment in enumerate(self.snake.segments):
+            # Head is green, body is a slightly different shade
+            color = GREEN if i == 0 else BLUE
+
+            # Convert grid position to pixel position
+            pixel_pos = grid_to_pixel(segment)
+
+            # Draw the segment
+            pygame.draw.rect(
+                self.screen, color, (pixel_pos[0], pixel_pos[1], GRID_SIZE, GRID_SIZE)
+            )
+
+            # Draw a border around the segment
+            pygame.draw.rect(
+                self.screen,
+                BLACK,
+                (pixel_pos[0], pixel_pos[1], GRID_SIZE, GRID_SIZE),
+                1,
+            )
+
+    def draw_ui(self):
+        """
+        Draw UI elements.
+        """
+        # Draw score
+        score_text = self.font.render(f"Score: {self.score}", True, WHITE)
+        self.screen.blit(score_text, (10, 10))
+
+        # Draw length
+        length_text = self.font.render(f"Length: {self.snake.length}", True, WHITE)
+        self.screen.blit(length_text, (10, 40))
+
+        # Draw game over message if game is over
+        if self.game_over:
+            game_over_text = self.large_font.render("GAME OVER", True, RED)
+            restart_text = self.font.render("Press R to restart", True, WHITE)
+
+            # Center the text
+            game_over_rect = game_over_text.get_rect(
+                center=(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2 - 20)
+            )
+            restart_rect = restart_text.get_rect(
+                center=(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2 + 20)
+            )
+
+            # Draw the text
+            self.screen.blit(game_over_text, game_over_rect)
+            self.screen.blit(restart_text, restart_rect)
+
     def run_game_loop(self):
         """
         Run the main game loop.
@@ -129,6 +239,9 @@ class Game:
             if not self.update():
                 self.stop()
                 return False
+
+            # Render the game
+            self.render()
 
             # Control game speed
             self.clock.tick(FPS)
