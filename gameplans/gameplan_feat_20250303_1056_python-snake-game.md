@@ -82,14 +82,14 @@ Implementation Notes:
 - Implemented visual representation of game boundaries
 - Added UI elements for score, snake length, and game over status
 
-### Stage 4: Game Mechanics
+### ✅ Stage 4: Game Mechanics
 Tasks:
-- [ ] Implement Fruit class with random placement
-- [ ] Add snake growth when eating fruits
-- [ ] Implement Bomb class with placement logic
-- [ ] Add snake shrinking when hitting bombs
-- [ ] Implement the mechanic to add a new bomb when a fruit is eaten
-- [ ] Ensure bombs remain until hit
+- [x] Implement Fruit class with random placement
+- [x] Add snake growth when eating fruits
+- [x] Implement Bomb class with placement logic
+- [x] Add snake shrinking when hitting bombs
+- [x] Implement the mechanic to add a new bomb when a fruit is eaten
+- [x] Ensure bombs remain until hit
 
 Acceptance Criteria:
 - Fruits appear randomly on the board
@@ -97,6 +97,17 @@ Acceptance Criteria:
 - Bombs appear when fruits are eaten
 - Snake shrinks when hitting bombs
 - Game mechanics match the requirements
+
+Implementation Notes:
+- Created Fruit class with random placement functionality
+- Created Bomb class with placement logic
+- Updated Game class to manage fruits and bombs
+- Implemented collision detection with fruits and bombs
+- Added logic for snake growth when eating fruits
+- Added logic for snake shrinking when hitting bombs
+- Implemented the mechanic to add a new bomb when a fruit is eaten
+- Ensured bombs remain on the board until hit by the snake
+- Added game over condition when snake length becomes zero
 
 ### Stage 5: Finalization
 Tasks:

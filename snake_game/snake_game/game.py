@@ -5,6 +5,8 @@ Game class for managing the game state and loop.
 import pygame
 import pygame.font
 
+from snake_game.objects.bomb import Bomb
+from snake_game.objects.fruit import Fruit
 from snake_game.objects.game_board import GameBoard
 from snake_game.objects.snake import Snake
 from snake_game.utils import (
@@ -41,6 +43,8 @@ class Game:
         self.game_over = False
         self.clock = pygame.time.Clock()
         self.score = 0
+        self.fruit = None
+        self.bombs = []
 
         # Initialize pygame
         pygame.init()
@@ -64,6 +68,12 @@ class Game:
         # Reset the game board and snake
         self.board.clear()
         self.snake = Snake()
+
+        # Create initial fruit
+        self.fruit = Fruit(self.board, self.snake)
+
+        # Clear bombs
+        self.bombs = []
 
     def stop(self):
         """
@@ -125,6 +135,40 @@ class Game:
             self.game_over = True
             return True
 
+        # Check for collision with fruit
+        if self.fruit and new_head == self.fruit.position:
+            # Increase score
+            self.score += 10
+
+            # Grow the snake
+            self.snake.grow()
+
+            # Respawn the fruit
+            self.fruit.respawn()
+
+            # Add a new bomb
+            self.bombs.append(Bomb(self.board, self.snake))
+
+        # Check for collision with bombs
+        bombs_to_remove = []
+        for bomb in self.bombs:
+            if new_head == bomb.position:
+                # Shrink the snake
+                self.snake.shrink()
+
+                # Remove the bomb
+                bomb.remove()
+                bombs_to_remove.append(bomb)
+
+                # Check if snake length is zero
+                if self.snake.length == 0:
+                    self.game_over = True
+                    return True
+
+        # Remove hit bombs from the list
+        for bomb in bombs_to_remove:
+            self.bombs.remove(bomb)
+
         return True
 
     def render(self):
@@ -136,6 +180,12 @@ class Game:
 
         # Draw the game board
         self.draw_board()
+
+        # Draw the fruit
+        self.draw_fruit()
+
+        # Draw the bombs
+        self.draw_bombs()
 
         # Draw the snake
         self.draw_snake()
@@ -182,6 +232,52 @@ class Game:
             )
 
             # Draw a border around the segment
+            pygame.draw.rect(
+                self.screen,
+                BLACK,
+                (pixel_pos[0], pixel_pos[1], GRID_SIZE, GRID_SIZE),
+                1,
+            )
+
+    def draw_fruit(self):
+        """
+        Draw the fruit.
+        """
+        if self.fruit:
+            # Convert grid position to pixel position
+            pixel_pos = grid_to_pixel(self.fruit.position)
+
+            # Draw the fruit
+            pygame.draw.rect(
+                self.screen,
+                self.fruit.color,
+                (pixel_pos[0], pixel_pos[1], GRID_SIZE, GRID_SIZE),
+            )
+
+            # Draw a border around the fruit
+            pygame.draw.rect(
+                self.screen,
+                BLACK,
+                (pixel_pos[0], pixel_pos[1], GRID_SIZE, GRID_SIZE),
+                1,
+            )
+
+    def draw_bombs(self):
+        """
+        Draw the bombs.
+        """
+        for bomb in self.bombs:
+            # Convert grid position to pixel position
+            pixel_pos = grid_to_pixel(bomb.position)
+
+            # Draw the bomb
+            pygame.draw.rect(
+                self.screen,
+                bomb.color,
+                (pixel_pos[0], pixel_pos[1], GRID_SIZE, GRID_SIZE),
+            )
+
+            # Draw a border around the bomb
             pygame.draw.rect(
                 self.screen,
                 BLACK,
