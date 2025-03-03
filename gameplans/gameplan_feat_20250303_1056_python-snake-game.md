@@ -39,19 +39,27 @@ Implementation Notes:
 - Created comprehensive README.md with game description, features, and instructions
 - Set up a basic entry point (main.py) with minimal initialization code
 
-### Stage 2: Core Game Logic
+### ✅ Stage 2: Core Game Logic
 Tasks:
-- [ ] Implement Snake class with basic movement
-- [ ] Implement GameBoard class for managing the game area
-- [ ] Create collision detection system
-- [ ] Implement basic game loop with state management
-- [ ] Add keyboard controls for snake movement
+- [x] Implement Snake class with basic movement
+- [x] Implement GameBoard class for managing the game area
+- [x] Create collision detection system
+- [x] Implement basic game loop with state management
+- [x] Add keyboard controls for snake movement
 
 Acceptance Criteria:
 - Snake can move in four directions
 - Snake movement is controlled by keyboard
 - Basic collision detection works
 - Game loop runs smoothly
+
+Implementation Notes:
+- Created utils.py with common constants and helper functions
+- Implemented Snake class with movement, growth, and collision detection
+- Implemented GameBoard class for managing the game area and object placement
+- Created Game class with game loop and state management
+- Added keyboard controls for snake movement and game control
+- Implemented collision detection for walls and self
 
 ### Stage 3: Game Rendering
 Tasks:

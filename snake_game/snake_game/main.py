@@ -5,25 +5,31 @@ Main entry point for the Snake game.
 
 import sys
 
-import pygame
+from snake_game.game import Game
 
 
 def main():
     """
     Main function to initialize and run the game.
     """
-    # Initialize pygame
-    pygame.init()
+    # Create and run the game
+    game = Game()
 
-    # Print initialization message
-    print("Snake Game initialized!")
-    print(
-        "This is a placeholder. The full game will be implemented in the next stages."
-    )
+    try:
+        # Run the game loop
+        restart = game.run_game_loop()
 
-    # Clean up and exit
-    pygame.quit()
-    sys.exit()
+        # If the game should restart, do so
+        while restart:
+            restart = game.run_game_loop()
+
+    except Exception as e:
+        print(f"Error: {e}")
+
+    finally:
+        # Clean up resources
+        game.cleanup()
+        sys.exit()
 
 
 if __name__ == "__main__":
