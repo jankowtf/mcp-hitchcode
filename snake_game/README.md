@@ -9,6 +9,7 @@ A straightforward implementation of the classic Snake game in Python using Pygam
 - Bombs that decrease the snake's length when hit
 - Dynamic difficulty: each fruit eaten spawns a new bomb
 - Bombs remain on the canvas until hit by the snake
+- Wall wrap feature: snake can pass through walls and emerge from the opposite side
 - Score tracking and game over conditions
 - High score tracking
 - Visual effects and animations
@@ -43,7 +44,7 @@ If you don't have Poetry installed, you can install it following the instruction
 - Use arrow keys to control the snake's direction
 - Eat fruits (green) to grow longer and increase your score
 - Avoid bombs (red) as they will decrease your snake's length
-- Avoid hitting the walls or yourself
+- The snake can pass through walls and emerge from the opposite side
 - Each fruit eaten will spawn a new bomb, increasing the difficulty
 - The game ends when the snake's length becomes zero or when it hits itself
 - Try to achieve the highest score possible!
@@ -64,6 +65,11 @@ If you don't have Poetry installed, you can install it following the instruction
 - Each fruit eaten adds 10 points to your score
 - The high score is tracked between game sessions
 - Game statistics are displayed at game over
+
+### Wall Wrap
+- The snake can pass through walls and emerge from the opposite side
+- This creates more strategic gameplay options
+- Use this feature to quickly navigate across the game board
 
 ### Visual Effects
 - Snake changes color when eating a fruit

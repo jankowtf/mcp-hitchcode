@@ -2,7 +2,7 @@
 Snake class for managing the snake's segments and movement.
 """
 
-from snake_game.utils import RIGHT, is_collision
+from snake_game.utils import GRID_HEIGHT, GRID_WIDTH, RIGHT, is_collision
 
 
 class Snake:
@@ -49,6 +49,32 @@ class Snake:
         """
         return len(self.segments)
 
+    def wrap_position(self, position):
+        """
+        Wrap a position around the game board boundaries.
+
+        Args:
+            position (tuple): Position to wrap (x, y)
+
+        Returns:
+            tuple: Wrapped position (x, y)
+        """
+        x, y = position
+
+        # Wrap horizontally
+        if x >= GRID_WIDTH:
+            x = 0
+        elif x < 0:
+            x = GRID_WIDTH - 1
+
+        # Wrap vertically
+        if y >= GRID_HEIGHT:
+            y = 0
+        elif y < 0:
+            y = GRID_HEIGHT - 1
+
+        return (x, y)
+
     def move(self):
         """
         Move the snake in its current direction.
@@ -60,6 +86,9 @@ class Snake:
         head_x, head_y = self.head
         dir_x, dir_y = self.direction
         new_head = (head_x + dir_x, head_y + dir_y)
+
+        # Wrap the head position around the game board
+        new_head = self.wrap_position(new_head)
 
         # Insert new head at the beginning of the segments list
         self.segments.insert(0, new_head)

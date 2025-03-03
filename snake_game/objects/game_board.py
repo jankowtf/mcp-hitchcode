@@ -31,6 +31,32 @@ class GameBoard:
         x, y = position
         return 0 <= x < self.width and 0 <= y < self.height
 
+    def wrap_position(self, position):
+        """
+        Wrap a position around the game board boundaries.
+
+        Args:
+            position (tuple): Position to wrap (x, y)
+
+        Returns:
+            tuple: Wrapped position (x, y)
+        """
+        x, y = position
+
+        # Wrap horizontally
+        if x >= self.width:
+            x = 0
+        elif x < 0:
+            x = self.width - 1
+
+        # Wrap vertically
+        if y >= self.height:
+            y = 0
+        elif y < 0:
+            y = self.height - 1
+
+        return (x, y)
+
     def is_position_empty(self, position):
         """
         Check if a position is empty (not occupied by any object).

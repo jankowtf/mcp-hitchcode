@@ -213,11 +213,6 @@ class Game:
         # Move the snake
         new_head = self.snake.move()
 
-        # Check for collisions with walls
-        if not self.board.is_position_valid(new_head):
-            self.game_over_sequence()
-            return True
-
         # Check for collisions with self
         if self.snake.is_collision_with_self():
             self.game_over_sequence()
