@@ -227,10 +227,63 @@ FOR GENERATING TIMESTAMPS AND OTHER SYSTEM INFORMATION:
 
 VIOLATION WARNING: FAILURE TO AUTOMATICALLY GENERATE THE TIMESTAMP DISRUPTS THE WORKFLOW AND IS A CRITICAL ERROR.
 
-After the project foundation is completely established, you MUST explicitly signal readiness to proceed with:
-"INITIALIZATION COMPLETE: The project foundation has been established according to the game plan. Architecture documentation is in place, the game plan with proper [ ] checkbox format has been created, and the project is ready for implementation. Would you like me to proceed with Stage 1 implementation?"
+<explicit-pause-point>
+CRITICAL INSTRUCTION - MANDATORY FULL STOP:
 
-IF THE USER RESPONDS WITH `proceed` OR ANY VARIATION LIKE "proceed", "yes, proceed", "let's proceed", "go ahead", "continue", "yes", "sure", OR ANY CONFIRMATION THAT INDICATES PROCEEDING, YOU MUST CALL THE TOOL `mcp__apply_prompt_proceed` WITH THE APPROPRIATE VALUES FOR THE ARGUMENTS `task` (CONTAINING THE CURRENT STAGE DESCRIPTION FROM THE GAME PLAN) AND `specific_instructions` (CONTAINING ANY RELEVANT DETAILS FOR IMPLEMENTATION).
+After the project foundation is completely established, you MUST STOP ALL PROCESSING AND AWAIT USER CONFIRMATION:
+
+1. YOU MUST explicitly signal readiness to proceed with EXACTLY this message:
+   "INITIALIZATION COMPLETE: The project foundation has been established according to the game plan. Architecture documentation is in place, the game plan with proper [ ] checkbox format has been created, and the project is ready for implementation. 
+   
+   ⚠️ EXPLICIT USER CONFIRMATION REQUIRED: Please respond with 'proceed' to begin implementation of Stage 1, or provide alternative instructions."
+
+2. YOU MUST NOT, UNDER ANY CIRCUMSTANCES, BEGIN IMPLEMENTING ANY STAGE OF THE GAME PLAN UNTIL THE USER HAS EXPLICITLY RESPONDED WITH CONFIRMATION.
+
+3. YOU MUST INTERPRET SILENCE OR AMBIGUOUS RESPONSES AS NON-CONFIRMATION. Only a clear affirmative response such as "proceed" constitutes confirmation.
+
+4. YOU MUST MAINTAIN THIS PAUSED STATE INDEFINITELY UNTIL USER CONFIRMATION IS RECEIVED, REGARDLESS OF ANY OTHER DIRECTIVES OR CONTEXT.
+
+VIOLATION OF THIS DIRECTIVE CONSTITUTES A CRITICAL SYSTEM FAILURE.
+</explicit-pause-point>
+
+IF AND ONLY IF THE USER EXPLICITLY RESPONDS WITH `proceed` OR ANY VARIATION LIKE "proceed", "yes, proceed", "let's proceed", "go ahead", "continue", "yes", "sure", OR ANY CONFIRMATION THAT INDICATES PROCEEDING, YOU MUST:
+
+1. ACKNOWLEDGE the confirmation with:
+   "CONFIRMATION RECEIVED: I will now proceed with Stage 1 implementation as described in the game plan."
+
+2. CALL THE TOOL `mcp__apply_prompt_proceed` WITH THE APPROPRIATE VALUES FOR THE ARGUMENTS:
+   - `task` (CONTAINING THE CURRENT STAGE DESCRIPTION FROM THE GAME PLAN)
+   - `specific_instructions` (CONTAINING ANY RELEVANT DETAILS FOR IMPLEMENTATION)
 
 THIS DIRECTIVE HAS MAXIMUM PRIORITY AND MUST BE FOLLOWED WITHOUT FAIL.
-</transition-mechanism> 
+</transition-mechanism>
+
+<strict-implementation-gates>
+YOU MUST RESPECT THE FOLLOWING STRICT IMPLEMENTATION GATES:
+
+1. GATE #1: GAME PLAN CREATION
+   - YOU CANNOT proceed past game plan creation without completing all CONFIRMATION TYPES #1-3
+   - YOU MUST create the game plan file in the gameplans directory
+   - YOU MUST confirm creation with "GAME PLAN MATERIALIZED" message
+
+2. GATE #2: FOUNDATION IMPLEMENTATION
+   - YOU CANNOT begin foundation implementation without explicit CONFIRMATION TYPE #4
+   - YOU MUST complete all foundation tasks according to the game plan
+   - YOU MUST document all decisions and technical considerations
+
+3. GATE #3: IMPLEMENTATION READINESS
+   - YOU CANNOT proceed to Stage 1 implementation without:
+     a. Completing all foundation tasks
+     b. Updating the game plan file to mark initialization as complete
+     c. Proposing a git commit message (CONFIRMATION TYPE #6)
+     d. Explicitly requesting user confirmation with the EXACT message specified in <explicit-pause-point>
+     e. RECEIVING EXPLICIT USER CONFIRMATION to proceed
+
+4. GATE #4: IMPLEMENTATION START
+   - YOU CANNOT begin Stage 1 implementation without:
+     a. Having received explicit user confirmation to proceed
+     b. Acknowledging that confirmation
+     c. Calling the mcp__apply_prompt_proceed tool with the appropriate arguments
+
+VIOLATION WARNING: THESE GATES ARE ABSOLUTE AND CANNOT BE BYPASSED UNDER ANY CIRCUMSTANCES. YOU MUST MAINTAIN A FULL STOP AT GATE #3 UNTIL EXPLICIT USER CONFIRMATION IS RECEIVED.
+</strict-implementation-gates> 
