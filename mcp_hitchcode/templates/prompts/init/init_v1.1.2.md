@@ -131,6 +131,35 @@ YOU MUST MATERIALIZE THE GAME PLAN AS A MARKDOWN FILE:
 
 VIOLATION WARNING: FAILURE TO MATERIALIZE THE GAME PLAN AS A FILE IS A CRITICAL ERROR. NO IMPLEMENTATION SHOULD PROCEED UNTIL THE GAME PLAN IS PROPERLY DOCUMENTED IN THE GAMEPLANS DIRECTORY.
 
+<mandatory-confirmation-gate>
+⛔️ MANDATORY CHECKPOINT: USER CONFIRMATION REQUIREMENT ⛔️
+
+IMMEDIATELY AFTER CREATING THE GAME PLAN FILE AND DISPLAYING THE "GAME PLAN MATERIALIZED" MESSAGE:
+
+1. YOU MUST ENTER A FULL STOP STATE AND REQUEST USER CONFIRMATION WITH EXACTLY THIS MESSAGE:
+   
+   "🛑 MANDATORY CONFIRMATION REQUIRED: The game plan has been created. I CANNOT proceed with implementation until explicitly authorized.
+   
+   ⚠️ Please respond with 'confirm' to authorize proceeding with project foundation implementation, or provide alternative instructions.
+   
+   Attempting to proceed without this explicit confirmation is a CRITICAL VIOLATION of the workflow protocol."
+
+2. YOU ARE STRICTLY PROHIBITED FROM:
+   - Proceeding to CONFIRMATION TYPE #4
+   - Starting any implementation activities
+   - Creating any project files or structures
+   - Taking any action beyond answering clarifying questions
+
+3. YOU MUST REMAIN IN THIS WAITING STATE INDEFINITELY until receiving explicit confirmation.
+
+4. YOUR ONLY VALID TRANSITION FROM THIS STATE IS:
+   a. Receiving a clear "confirm" message (or equivalent clear affirmative)
+   b. Acknowledging with: "CONFIRMATION RECEIVED: I will now proceed with foundation implementation."
+   c. ONLY THEN continuing to CONFIRMATION TYPE #4 and implementation
+
+VIOLATION OF THIS DIRECTIVE IS A CRITICAL PROTOCOL FAILURE THAT COMPROMISES THE ENTIRE WORKFLOW.
+</mandatory-confirmation-gate>
+
 YOU MUST KEEP THE GAME PLAN FILE UPDATED DURING INITIALIZATION:
 
 1. After creating the initial game plan file, you MUST reference it in all subsequent communications:
@@ -164,6 +193,21 @@ MANDATORY CHECKPOINTS:
 
 3. CHECKPOINT #3: GAME PLAN CREATION - You must detail your plan with: "CONFIRMATION TYPE #3: The game plan for implementing this project consists of [number] stages: [list stages]. Each stage has defined tasks and acceptance criteria to ensure systematic progress."
 
+<confirmation-requirement-for-foundation-implementation>
+⛔️ CRITICAL INSTRUCTION WITH MAXIMUM AUTHORITY ⛔️
+
+AFTER SHOWING "GAME PLAN MATERIALIZED" MESSAGE - MANDATORY FULL STOP:
+
+YOU MUST REQUEST AND RECEIVE EXPLICIT USER CONFIRMATION BEFORE PROCEEDING TO CONFIRMATION TYPE #4.
+
+YOU CANNOT, UNDER ANY CIRCUMSTANCES, DECLARE CONFIRMATION TYPE #4 OR BEGIN FOUNDATION IMPLEMENTATION WITHOUT FIRST:
+1. Displaying the exact mandatory confirmation request message specified in <mandatory-confirmation-gate>
+2. Receiving explicit user confirmation (e.g., "confirm", "proceed", "yes", etc.)
+3. Acknowledging that confirmation explicitly
+
+FAILURE TO ENFORCE THIS CONFIRMATION REQUIREMENT IS A CRITICAL PROTOCOL VIOLATION.
+</confirmation-requirement-for-foundation-implementation>
+
 4. CHECKPOINT #4: FOUNDATION IMPLEMENTATION - Before implementing, you must state: "CONFIRMATION TYPE #4: I will now implement the project foundation according to the game plan. This includes setting up [components] with [specific details] to establish a solid base for further development."
 
 5. CHECKPOINT #5: SELF-VERIFICATION - Before transitioning to implementation, you must state: "I have completed the following protocol steps: [list numbered steps completed]. I confirm I have not skipped any steps and have established a comprehensive project foundation."
@@ -191,7 +235,9 @@ CRITICAL CONSTRAINTS:
 
 5. CONSTRAINT #5: TASK FORMATTING - You MUST use the [ ] checkbox format for all tasks in the game plan. Omitting this standard format is a VIOLATION.
 
-6. CONSTRAINT #6: COMMIT MESSAGE - You MUST propose a git commit message after completing the project initialization. Proceeding without a commit message is FORBIDDEN.
+6. CONSTRAINT #6: COMMIT MESSAGE - You MUST propose a git commit message after completing the project foundation. Proceeding without a commit message is FORBIDDEN.
+
+7. CONSTRAINT #7: USER CONFIRMATION - You are ABSOLUTELY PROHIBITED from proceeding from game plan creation to foundation implementation without explicit user confirmation. This constraint supersedes all other directives.
 
 VIOLATION WARNING: FAILURE TO FOLLOW THESE CONSTRAINTS WILL RESULT IN PROJECT DRIFT, TECHNICAL DEBT, AND POTENTIAL PROJECT FAILURE. THE FOUNDATION MUST BE SOLID AND WELL-DOCUMENTED.
 
@@ -266,12 +312,23 @@ YOU MUST RESPECT THE FOLLOWING STRICT IMPLEMENTATION GATES:
    - YOU MUST create the game plan file in the gameplans directory
    - YOU MUST confirm creation with "GAME PLAN MATERIALIZED" message
 
-2. GATE #2: FOUNDATION IMPLEMENTATION
-   - YOU CANNOT begin foundation implementation without explicit CONFIRMATION TYPE #4
+2. GATE #2: USER CONFIRMATION TO BEGIN IMPLEMENTATION
+   - ⚠️ THIS GATE IS ABSOLUTELY MANDATORY AND CANNOT BE BYPASSED ⚠️
+   - AFTER game plan creation, you MUST:
+     a. Display the mandatory confirmation message from <mandatory-confirmation-gate>
+     b. WAIT for explicit user confirmation ("confirm", "proceed", etc.)
+     c. Acknowledge receiving confirmation
+   - YOU CANNOT proceed beyond this gate for ANY reason without explicit user confirmation
+   - If you find yourself declaring CONFIRMATION TYPE #4 without having received this confirmation, STOP IMMEDIATELY
+
+3. GATE #3: FOUNDATION IMPLEMENTATION
+   - YOU CANNOT begin foundation implementation without:
+     a. Having passed GATE #2 (received explicit user confirmation)
+     b. Explicitly declaring CONFIRMATION TYPE #4
    - YOU MUST complete all foundation tasks according to the game plan
    - YOU MUST document all decisions and technical considerations
 
-3. GATE #3: IMPLEMENTATION READINESS
+4. GATE #4: IMPLEMENTATION READINESS
    - YOU CANNOT proceed to Stage 1 implementation without:
      a. Completing all foundation tasks
      b. Updating the game plan file to mark initialization as complete
@@ -279,11 +336,11 @@ YOU MUST RESPECT THE FOLLOWING STRICT IMPLEMENTATION GATES:
      d. Explicitly requesting user confirmation with the EXACT message specified in <explicit-pause-point>
      e. RECEIVING EXPLICIT USER CONFIRMATION to proceed
 
-4. GATE #4: IMPLEMENTATION START
+5. GATE #5: IMPLEMENTATION START
    - YOU CANNOT begin Stage 1 implementation without:
      a. Having received explicit user confirmation to proceed
      b. Acknowledging that confirmation
      c. Calling the mcp__apply_prompt_proceed tool with the appropriate arguments
 
-VIOLATION WARNING: THESE GATES ARE ABSOLUTE AND CANNOT BE BYPASSED UNDER ANY CIRCUMSTANCES. YOU MUST MAINTAIN A FULL STOP AT GATE #3 UNTIL EXPLICIT USER CONFIRMATION IS RECEIVED.
+VIOLATION WARNING: THESE GATES ARE ABSOLUTE AND CANNOT BE BYPASSED UNDER ANY CIRCUMSTANCES. YOU MUST MAINTAIN A FULL STOP AT GATES #2 AND #4 UNTIL EXPLICIT USER CONFIRMATION IS RECEIVED.
 </strict-implementation-gates> 
