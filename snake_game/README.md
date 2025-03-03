@@ -10,6 +10,10 @@ A straightforward implementation of the classic Snake game in Python using Pygam
 - Dynamic difficulty: each fruit eaten spawns a new bomb
 - Bombs remain on the canvas until hit by the snake
 - Score tracking and game over conditions
+- High score tracking
+- Visual effects and animations
+- Sound effects (can be toggled on/off)
+- Detailed game statistics
 
 ## Requirements
 
@@ -42,6 +46,7 @@ If you don't have Poetry installed, you can install it following the instruction
 - Avoid hitting the walls or yourself
 - Each fruit eaten will spawn a new bomb, increasing the difficulty
 - The game ends when the snake's length becomes zero or when it hits itself
+- Try to achieve the highest score possible!
 
 ## Controls
 
@@ -50,7 +55,27 @@ If you don't have Poetry installed, you can install it following the instruction
 - **Arrow Left**: Move snake left
 - **Arrow Right**: Move snake right
 - **R**: Restart game after game over
+- **S**: Toggle sound effects on/off
 - **ESC**: Quit game
+
+## Game Features
+
+### Scoring System
+- Each fruit eaten adds 10 points to your score
+- The high score is tracked between game sessions
+- Game statistics are displayed at game over
+
+### Visual Effects
+- Snake changes color when eating a fruit
+- Snake flashes when hitting a bomb
+- Fruits and bombs have pulsating animations
+- Semi-transparent overlay on game over screen
+
+### Sound Effects
+- Sound when eating a fruit
+- Sound when hitting a bomb
+- Sound when game over
+- Sounds can be toggled on/off with the S key
 
 ## Project Structure
 
@@ -63,6 +88,10 @@ snake_game/
 │   ├── main.py
 │   ├── game.py
 │   ├── utils.py
+│   ├── sounds/
+│   │   ├── eat.wav
+│   │   ├── hit.wav
+│   │   └── game_over.wav
 │   └── objects/
 │       ├── __init__.py
 │       ├── snake.py

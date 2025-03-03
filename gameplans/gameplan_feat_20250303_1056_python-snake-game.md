@@ -109,14 +109,14 @@ Implementation Notes:
 - Ensured bombs remain on the board until hit by the snake
 - Added game over condition when snake length becomes zero
 
-### Stage 5: Finalization
+### ✅ Stage 5: Finalization
 Tasks:
-- [ ] Add scoring system
-- [ ] Implement game over conditions
-- [ ] Add game restart functionality
-- [ ] Polish visuals and add simple effects
-- [ ] Optimize performance
-- [ ] Add final documentation
+- [x] Add scoring system
+- [x] Implement game over conditions
+- [x] Add game restart functionality
+- [x] Polish visuals and add simple effects
+- [x] Optimize performance
+- [x] Add final documentation
 
 Acceptance Criteria:
 - Game has clear win/lose conditions
@@ -124,6 +124,18 @@ Acceptance Criteria:
 - Game can be restarted
 - Performance is smooth
 - Documentation is complete
+
+Implementation Notes:
+- Enhanced the scoring system with high score tracking
+- Added detailed game statistics (fruits eaten, bombs hit, max snake length)
+- Improved game over conditions and added a game over sequence
+- Enhanced game restart functionality
+- Added visual polish with animations and effects (color changes, pulsating objects)
+- Added sound effects with the ability to toggle them on/off
+- Added a semi-transparent overlay for the game over screen
+- Updated the README.md with comprehensive documentation
+- Created a sounds directory for audio files
+- Added performance optimizations by using efficient rendering techniques
 
 ## Implementation Details
 
@@ -137,6 +149,10 @@ snake_game/
 │   ├── main.py
 │   ├── game.py
 │   ├── utils.py
+│   ├── sounds/
+│   │   ├── eat.wav
+│   │   ├── hit.wav
+│   │   └── game_over.wav
 │   └── objects/
 │       ├── __init__.py
 │       ├── snake.py
