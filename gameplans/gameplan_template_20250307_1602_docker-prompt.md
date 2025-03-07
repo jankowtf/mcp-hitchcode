@@ -13,12 +13,12 @@ Tasks:
 - [x] Create a dedicated `docker` folder inside `mcp_hitchcode/templates/prompts/`
 - [x] Confirm directory structure matches other template directories
 
-### Stage 2: Template File Creation
+### ✅ Stage 2: Template File Creation
 Tasks:
-- [ ] Create the initial versioned Docker template file (`docker_v1.0.0.md`)
-- [ ] Set up proper frontmatter with version, creation date, and description
-- [ ] Define template variables consistent with other templates
-- [ ] Add initial changelog entry
+- [x] Create the initial versioned Docker template file (`docker_v1.0.0.md`)
+- [x] Set up proper frontmatter with version, creation date, and description
+- [x] Define template variables consistent with other templates
+- [x] Add initial changelog entry
 
 ### Stage 3: Template Structure Standardization
 Tasks:
