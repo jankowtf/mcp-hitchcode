@@ -360,7 +360,33 @@ async def apply_prompt_infra(
     response_text = render_prompt_template(
         "infra",
         version_str=version,
-        infrastructure_info=infrastructure_info,
+        objective=infrastructure_info,
+        specific_instructions=specific_instructions,
+    )
+    return [types.TextContent(type="text", text=response_text)]
+
+
+async def apply_prompt_docker(
+    containerization_objective: str,
+    specific_instructions: str = "",
+    version: str = "latest",
+) -> list[types.TextContent]:
+    """
+    Provides a prompt template for Docker container configurations and orchestration.
+
+    Args:
+        containerization_objective: Description of the containerization objective.
+        specific_instructions: Optional specific instructions about containerization requirements.
+        version: The version of the prompt template to use. Defaults to "latest".
+
+    Returns:
+        A list containing a TextContent object with the prompt.
+    """
+    # Render the prompt template with the containerization objective and specific instructions
+    response_text = render_prompt_template(
+        "docker",
+        version_str=version,
+        objective=containerization_objective,
         specific_instructions=specific_instructions,
     )
     return [types.TextContent(type="text", text=response_text)]
@@ -508,6 +534,21 @@ def main(port: int, transport: str) -> int:
             specific_instructions = arguments.get("specific_instructions", "")
             return await apply_prompt_infra(
                 infrastructure_info=arguments["infrastructure_info"],
+                specific_instructions=specific_instructions,
+                version=version,
+            )
+        elif name == "apply_prompt_docker":
+            if "containerization_objective" not in arguments:
+                return [
+                    types.TextContent(
+                        type="text",
+                        text="Error: Missing required argument 'containerization_objective'",
+                    )
+                ]
+            version = arguments.get("version", "latest")
+            specific_instructions = arguments.get("specific_instructions", "")
+            return await apply_prompt_docker(
+                containerization_objective=arguments["containerization_objective"],
                 specific_instructions=specific_instructions,
                 version=version,
             )
@@ -717,6 +758,28 @@ def main(port: int, transport: str) -> int:
                         "specific_instructions": {
                             "type": "string",
                             "description": "Optional specific instructions to include in the prompt",
+                        },
+                        "version": {
+                            "type": "string",
+                            "description": "The version of the prompt template to use (e.g., '1.0.0', '1.1.0', or 'latest')",
+                        },
+                    },
+                },
+            ),
+            types.Tool(
+                name="apply_prompt_docker",
+                description="Provides a prompt template for Docker container configurations and orchestration",
+                inputSchema={
+                    "type": "object",
+                    "required": ["containerization_objective"],
+                    "properties": {
+                        "containerization_objective": {
+                            "type": "string",
+                            "description": "Description of the containerization objective",
+                        },
+                        "specific_instructions": {
+                            "type": "string",
+                            "description": "Optional specific instructions about containerization requirements",
                         },
                         "version": {
                             "type": "string",
