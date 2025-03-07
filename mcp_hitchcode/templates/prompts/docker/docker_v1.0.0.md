@@ -70,29 +70,33 @@ REMINDER: ALL STEPS IN THIS SECTION MUST BE PERFORMED IN SEQUENCE - NO EXCEPTION
 </required-tasks>
 
 <implementation-principles>
-1. USE MULTI-STAGE BUILDS for production services to minimize image size and attack surface.
+1. USE MULTI-STAGE BUILDS to separate build-time dependencies from runtime images, significantly reducing final image size and attack surface.
 
-2. IMPLEMENT LEAST PRIVILEGE PRINCIPLE by running containers as non-root users whenever possible.
+2. IMPLEMENT LEAST PRIVILEGE PRINCIPLE by running containers as non-root users with minimal capabilities and read-only filesystems where possible.
 
-3. OPTIMIZE LAYER CACHING by ordering Dockerfile instructions from least to most frequently changing.
+3. OPTIMIZE LAYER CACHING by ordering Dockerfile instructions from least to most frequently changing, and combining related commands within single RUN statements.
 
-4. PROVIDE SENSIBLE DEFAULTS for all environment variables while allowing override via environment.
+4. PROVIDE SENSIBLE DEFAULTS for all environment variables using the ${VARIABLE:-default} pattern in Dockerfiles and Compose files.
 
-5. CLEAN UP temporary files, package manager caches, and build artifacts within the same layer they were created.
+5. CLEAN UP temporary files, package manager caches, and build artifacts within the same layer they were created to avoid bloating images.
 
-6. USE SPECIFIC VERSION TAGS for all base images to ensure reproducible builds.
+6. USE SPECIFIC VERSION TAGS for all base images rather than 'latest' to ensure reproducible builds and predictable behavior.
 
-7. IMPLEMENT HEALTH CHECKS for all services to enable proper orchestration and monitoring.
+7. IMPLEMENT COMPREHENSIVE HEALTH CHECKS with appropriate intervals and retries to enable proper orchestration and self-healing.
 
-8. EXPOSE ONLY NECESSARY PORTS to minimize attack surface.
+8. EXPOSE ONLY NECESSARY PORTS and bind to specific interfaces rather than 0.0.0.0 when possible to reduce attack surface.
 
-9. SEPARATE DEVELOPMENT AND PRODUCTION CONFIGURATIONS when appropriate.
+9. SEPARATE DEVELOPMENT AND PRODUCTION CONFIGURATIONS using environment-specific Compose files or build arguments.
 
-10. FOLLOW THE PATTERN: builder stage for compilation/dependencies, runtime stage for execution.
+10. USE BUILDKIT FEATURES such as build secrets, cache mounts, and SSH forwarding to improve security and build performance.
+
+11. LEVERAGE CONTAINER LABELS for metadata, ownership, and versioning according to OCI Image Specification.
+
+12. IMPLEMENT PROPER SIGNAL HANDLING in container entrypoints to ensure graceful shutdowns and avoid data corruption.
 </implementation-principles>
 
 <docker-patterns>
-1. PYTHON APPLICATION PATTERN:
+1. PYTHON APPLICATION PATTERN (FASTAPI):
 ```dockerfile
 # Stage 1: Builder stage
 FROM python:3.12-slim AS builder
@@ -104,7 +108,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
     && rm -rf /var/lib/apt/lists/*
 
-# Install package manager and clean cache
+# Install uv as a faster alternative to pip
 RUN pip install --no-cache-dir uv && \
     rm -rf /root/.cache/pip/*
 
@@ -112,7 +116,7 @@ RUN pip install --no-cache-dir uv && \
 COPY pyproject.toml README.md ./
 COPY src/ ./src/
 
-# Build the package
+# Build the package using uv for better performance
 RUN uv pip install --system build && \
     python -m build --wheel . && \
     rm -rf /root/.cache/pip/* /root/.cache/uv/*
@@ -122,64 +126,44 @@ FROM python:3.12-slim AS runtime
 
 WORKDIR /app
 
-# Install runtime dependencies only
+# Install only the necessary runtime dependencies
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    # Add required runtime dependencies here
+    libpq5 \
     && rm -rf /var/lib/apt/lists/*
 
 # Copy and install only the built wheel from the builder stage
 COPY --from=builder /build/dist/*.whl ./
-RUN pip install --no-cache-dir ./*.whl && \
+RUN pip install --no-cache-dir ./*.whl fastapi uvicorn && \
     rm -f ./*.whl
 
 # Set environment variables
 ENV PYTHONUNBUFFERED=1 \
-    PYTHONDONTWRITEBYTECODE=1
+    PYTHONDONTWRITEBYTECODE=1 \
+    APP_ENV=production \
+    PORT=8000
 
-# Run as non-root user for security
+# Create non-root user for running the application
 RUN useradd -m appuser
 USER appuser
 
-# Command to run the application
-CMD ["python", "-m", "package_name"]
+# Expose the API port
+EXPOSE ${PORT}
+
+# Health check to enable orchestration
+HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
+    CMD curl -f http://localhost:${PORT}/health || exit 1
+
+# Start the application with proper signal handling
+CMD ["sh", "-c", "exec uvicorn app.main:app --host 0.0.0.0 --port ${PORT}"]
 ```
 
-2. DOCKER COMPOSE SERVICE PATTERN:
+2. MULTI-SERVICE DOCKER COMPOSE PATTERN:
 ```yaml
 services:
-  service_name:
-    build:
-      context: .
-      dockerfile: docker/service.Dockerfile
-    container_name: project_service_name
-    depends_on:
-      dependency_service:
-        condition: service_healthy
-    environment:
-      # Environment variables with defaults
-      VARIABLE_NAME: ${VARIABLE_NAME:-default_value}
-    ports:
-      - "${EXTERNAL_PORT:-8000}:8000"
-    volumes:
-      # Development volumes
-      - ./src:/app/src
-    networks:
-      - project_network
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 10s
-    restart: unless-stopped
-```
-
-3. DATABASE SERVICE PATTERN:
-```yaml
-services:
-  database:
+  # Database service
+  postgres:
     image: postgres:15-alpine
-    container_name: project_database
+    container_name: ${PROJECT_NAME:-app}_postgres
     environment:
       POSTGRES_USER: ${POSTGRES_USER:-postgres}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
@@ -187,16 +171,139 @@ services:
     ports:
       - "${POSTGRES_PORT:-5432}:5432"
     volumes:
-      - database_data:/var/lib/postgresql/data
-      - ./docker/database/init:/docker-entrypoint-initdb.d
+      - postgres_data:/var/lib/postgresql/data
+      - ./docker/postgres/init:/docker-entrypoint-initdb.d
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres"]
       interval: 5s
       timeout: 5s
       retries: 5
     networks:
-      - project_network
+      - app_network
     restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 1G
+
+  # API service
+  api:
+    build:
+      context: .
+      dockerfile: docker/api.Dockerfile
+      args:
+        - BUILD_ENV=${BUILD_ENV:-production}
+    container_name: ${PROJECT_NAME:-app}_api
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      APP_ENV: ${APP_ENV:-production}
+      DATABASE_URL: ${DATABASE_URL:-postgresql://postgres:postgres@postgres:5432/postgres}
+      LOG_LEVEL: ${LOG_LEVEL:-info}
+      PORT: ${API_PORT:-8000}
+    ports:
+      - "${API_PORT:-8000}:${API_PORT:-8000}"
+    volumes:
+      # Mount source in development only
+      - ${DEV_MOUNT:-/dev/null}:/app/src
+    networks:
+      - app_network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:${API_PORT:-8000}/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    restart: unless-stopped
+    deploy:
+      replicas: ${API_REPLICAS:-1}
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
+
+  # Web service
+  web:
+    build:
+      context: .
+      dockerfile: docker/web.Dockerfile
+    container_name: ${PROJECT_NAME:-app}_web
+    depends_on:
+      api:
+        condition: service_healthy
+    environment:
+      API_URL: ${API_URL:-http://api:8000}
+      PORT: ${WEB_PORT:-3000}
+    ports:
+      - "${WEB_PORT:-3000}:${WEB_PORT:-3000}"
+    networks:
+      - app_network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:${WEB_PORT:-3000}/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    restart: unless-stopped
+
+networks:
+  app_network:
+    driver: bridge
+    name: ${NETWORK_NAME:-app_network}
+
+volumes:
+  postgres_data:
+    name: ${VOLUME_PREFIX:-app}_postgres_data
+```
+
+3. NODE.JS APPLICATION PATTERN:
+```dockerfile
+# Stage 1: Build dependencies
+FROM node:18-alpine AS deps
+WORKDIR /app
+
+# Install dependencies using package-lock.json for consistent installs
+COPY package.json package-lock.json ./
+RUN npm ci --only=production
+
+# Stage 2: Build application
+FROM node:18-alpine AS builder
+WORKDIR /app
+
+# Copy dependencies from previous stage
+COPY --from=deps /app/node_modules ./node_modules
+COPY . .
+
+# Build the application
+RUN npm run build
+
+# Stage 3: Runtime
+FROM node:18-alpine AS runtime
+WORKDIR /app
+
+# Set to production environment
+ENV NODE_ENV production
+
+# Create non-root user
+RUN addgroup --system --gid 1001 nodejs && \
+    adduser --system --uid 1001 nodeuser
+
+# Copy only necessary files from builder
+COPY --from=builder --chown=nodeuser:nodejs /app/package.json ./
+COPY --from=builder --chown=nodeuser:nodejs /app/dist ./dist
+COPY --from=deps --chown=nodeuser:nodejs /app/node_modules ./node_modules
+
+# Use non-root user
+USER nodeuser
+
+# Expose port and define healthcheck
+EXPOSE 3000
+HEALTHCHECK --interval=30s --timeout=5s --start-period=5s --retries=3 \
+    CMD node -e "require('http').request('http://localhost:3000/health', { timeout: 2000 }, res => process.exit(res.statusCode === 200 ? 0 : 1)).on('error', () => process.exit(1)).end()"
+
+# Command with proper signal handling
+CMD ["node", "dist/main"]
 ```
 </docker-patterns>
 
@@ -312,11 +419,11 @@ YOU CANNOT, UNDER ANY CIRCUMSTANCES, DECLARE CONFIRMATION TYPE #4 OR BEGIN DOCKE
 FAILURE TO ENFORCE THIS CONFIRMATION REQUIREMENT IS A CRITICAL PROTOCOL VIOLATION.
 </confirmation-requirement-for-implementation>
 
-4. CHECKPOINT #4: DOCKER IMPLEMENTATION - Before implementing, you must state: "CONFIRMATION TYPE #4: I will now implement the Docker configurations according to the containerization plan. This includes creating [files] with [specific details] to establish a solid containerization strategy."
+4. CHECKPOINT #4: DOCKER IMPLEMENTATION - Before implementing, you must state: "Implementation confirmed (CONFIRMATION TYPE #4): I will now implement the Docker configurations according to the containerization plan. This includes creating [files] with [specific details] to establish a solid containerization strategy."
 
-5. CHECKPOINT #5: SELF-VERIFICATION - Before proposing deployment, you must state: "I have completed the following protocol steps: [list numbered steps completed]. I confirm I have not skipped any steps and have established comprehensive Docker configurations."
+5. CHECKPOINT #5: SELF-VERIFICATION - Before proposing deployment, you must state: "Verification completed (CONFIRMATION TYPE #5): I have completed the following protocol steps: [list numbered steps completed]. I confirm I have not skipped any steps and have established comprehensive Docker configurations."
 
-6. CHECKPOINT #6: COMMIT MESSAGE PROPOSAL - After completing the Docker implementation, you must propose a git commit message: "CONFIRMATION TYPE #6: I propose the following git commit message for the Docker implementation:
+6. CHECKPOINT #6: COMMIT MESSAGE PROPOSAL - After completing the Docker implementation, you must propose a git commit message: "Commit message prepared (CONFIRMATION TYPE #6): I propose the following git commit message for the Docker implementation:
 ```
 feat: implement containerization strategy
 
@@ -448,54 +555,77 @@ VIOLATION WARNING: THESE GATES ARE ABSOLUTE AND CANNOT BE BYPASSED UNDER ANY CIR
 
 <docker-best-practices>
 1. BASE IMAGE SELECTION:
-   - Use official images from trusted sources (Docker Hub Official Images)
+   - Use official images from trusted sources (Docker Hub Official Images or verified publishers)
    - Use specific version tags rather than 'latest' for reproducibility
    - Prefer slim/alpine variants for smaller images when appropriate
    - Consider distroless images for minimal attack surface in production
+   - Use appropriate bases for language runtimes (e.g., python:3.12-slim, node:18-alpine)
+   - Regularly update base images to include security patches
 
 2. DOCKERFILE OPTIMIZATION:
-   - Order instructions from least to most frequently changing
-   - Group related RUN commands to reduce layers
-   - Use .dockerignore to exclude unnecessary files
+   - Order instructions from least to most frequently changing for optimal layer caching
+   - Group related RUN commands to reduce layers using && and \
+   - Use .dockerignore to exclude unnecessary files (node_modules, .git, etc.)
    - Clean up in the same layer where files were created
    - Use multi-stage builds to separate build and runtime dependencies
+   - Leverage BuildKit cache mounts for package managers
+   - Specify WORKDIR before commands that use it
+   - Use exec form of CMD/ENTRYPOINT for proper signal handling
 
 3. SECURITY PRACTICES:
-   - Run containers as non-root users
-   - Remove unnecessary tools and packages
-   - Set appropriate file permissions
+   - Run containers as non-root users with minimal capabilities
+   - Remove unnecessary tools and packages after build steps
+   - Set appropriate file permissions for sensitive files
    - Use COPY instead of ADD when possible
    - Scan images for vulnerabilities before deployment
-   - Never hardcode secrets in Dockerfiles
+   - Never hardcode secrets in Dockerfiles (use BuildKit secrets or mount at runtime)
+   - Configure read-only filesystems for production containers
+   - Implement resource limits to prevent DoS
+   - Use secrets management solutions for sensitive information
 
 4. ENVIRONMENT CONFIGURATION:
    - Provide reasonable defaults for all environment variables
    - Use the ${VAR:-default} pattern in Docker Compose
    - Document all environment variables clearly
    - Group related environment variables together
+   - Use environment-specific compose files (docker-compose.prod.yml)
+   - Consider .env files for development but not production
+   - Use Docker config and secrets for production environments
 
 5. VOLUME MANAGEMENT:
    - Use named volumes for persistent data
-   - Mount source code as volumes in development
+   - Mount source code as volumes in development only
    - Consider read-only file systems for production containers
    - Document volume mount points and purposes
+   - Use tmpfs for sensitive data that should not persist
+   - Implement proper backup strategies for volume data
+   - Define explicit volume drivers for specialized storage needs
 
 6. NETWORKING:
    - Use internal networks for service-to-service communication
    - Expose only necessary ports to the host
+   - Bind to specific interfaces rather than 0.0.0.0 when possible
    - Use DNS service names for service discovery in Docker Compose
    - Configure appropriate network segmentation
+   - Implement proper TLS for all network communications
+   - Use network policies for additional security
 
 7. HEALTH CHECKS:
    - Implement health checks for all services
    - Use depends_on with condition: service_healthy
    - Configure appropriate intervals and retries
    - Implement dedicated health check endpoints in applications
+   - Use start_period to allow for initialization
+   - Design health checks to verify actual service functionality
+   - Consider exit codes for proper health status reporting
 
-8. BUILD AND DEPLOYMENT:
+8. ORCHESTRATION AND CI/CD:
    - Document build arguments and their purposes
    - Configure appropriate restart policies
    - Set resource limits for containers
-   - Consider Docker BuildKit for faster builds
+   - Use Docker BuildKit for faster builds
    - Implement CI/CD pipelines for container builds and tests
+   - Tag images with git commit hashes for traceability
+   - Design container stacks for seamless scaling
+   - Implement Blue/Green or Canary deployment strategies
 </docker-best-practices> 
