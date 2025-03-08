@@ -13,6 +13,9 @@ import yaml
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 from packaging import version
 
+# Import the Docker file loader functions
+from . import docker_file_loader
+
 # Cache for template content to avoid repeated file I/O
 _template_cache: Dict[str, str] = {}
 
@@ -44,12 +47,18 @@ def get_template_env() -> Environment:
         Environment: The Jinja2 environment.
     """
     templates_dir = _get_templates_dir()
-    return Environment(
+    env = Environment(
         loader=FileSystemLoader(templates_dir),
         autoescape=select_autoescape(["html", "xml"]),
         trim_blocks=True,
         lstrip_blocks=True,
     )
+
+    # Register Docker file loader functions
+    env.globals["docker_file"] = docker_file_loader.docker_file
+    env.globals["docker_compose"] = docker_file_loader.docker_compose
+
+    return env
 
 
 def _parse_template_metadata(content: str) -> Tuple[Dict[str, Any], str]:

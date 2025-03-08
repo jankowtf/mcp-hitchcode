@@ -98,6 +98,7 @@ REMINDER: ALL STEPS IN THIS SECTION MUST BE PERFORMED IN SEQUENCE - NO EXCEPTION
 <docker-patterns>
 1. PYTHON APPLICATION PATTERN (FASTAPI):
 ```dockerfile
+# syntax=docker/dockerfile:1.4
 # Stage 1: Builder stage
 FROM python:3.12-slim AS builder
 
@@ -106,10 +107,16 @@ WORKDIR /build
 # Install build dependencies
 RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
+    curl \
     && rm -rf /var/lib/apt/lists/*
 
+# Create and activate virtual environment
+RUN python -m venv /opt/venv
+ENV PATH="/opt/venv/bin:$PATH"
+
 # Install uv as a faster alternative to pip
-RUN pip install --no-cache-dir uv && \
+RUN pip install --no-cache-dir --upgrade pip && \
+    pip install --no-cache-dir uv && \
     rm -rf /root/.cache/pip/*
 
 # Copy project files needed for building
@@ -117,9 +124,11 @@ COPY pyproject.toml README.md ./
 COPY src/ ./src/
 
 # Build the package using uv for better performance
-RUN uv pip install --system build && \
+RUN --mount=type=cache,target=/root/.cache/uv \
+    uv pip install build && \
     python -m build --wheel . && \
-    rm -rf /root/.cache/pip/* /root/.cache/uv/*
+    mkdir -p /wheels && \
+    cp dist/*.whl /wheels/
 
 # Stage 2: Runtime stage
 FROM python:3.12-slim AS runtime
@@ -129,11 +138,19 @@ WORKDIR /app
 # Install only the necessary runtime dependencies
 RUN apt-get update && apt-get install -y --no-install-recommends \
     libpq5 \
+    curl \
     && rm -rf /var/lib/apt/lists/*
 
-# Copy and install only the built wheel from the builder stage
-COPY --from=builder /build/dist/*.whl ./
-RUN pip install --no-cache-dir ./*.whl fastapi uvicorn && \
+# Create non-root user for running the application
+RUN useradd -m appuser
+
+# Copy virtual environment from builder stage
+COPY --from=builder /opt/venv /opt/venv
+ENV PATH="/opt/venv/bin:$PATH"
+
+# Copy the built wheel
+COPY --from=builder /wheels/*.whl ./
+RUN pip install --no-cache-dir ./*.whl && \
     rm -f ./*.whl
 
 # Set environment variables
@@ -142,9 +159,12 @@ ENV PYTHONUNBUFFERED=1 \
     APP_ENV=production \
     PORT=8000
 
-# Create non-root user for running the application
-RUN useradd -m appuser
+# Switch to non-root user
 USER appuser
+
+# Create directory for any app-generated files with proper permissions
+RUN mkdir -p /app/data /app/logs
+VOLUME ["/app/data", "/app/logs"]
 
 # Expose the API port
 EXPOSE ${PORT}
@@ -157,7 +177,85 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
 CMD ["sh", "-c", "exec uvicorn app.main:app --host 0.0.0.0 --port ${PORT}"]
 ```
 
-2. MULTI-SERVICE DOCKER COMPOSE PATTERN:
+2. PYTHON APPLICATION PATTERN (FLASK/GENERAL):
+```dockerfile
+# syntax=docker/dockerfile:1.4
+# Stage 1: Builder stage
+FROM python:3.12-slim AS builder
+
+WORKDIR /build
+
+# Install build dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential \
+    && rm -rf /var/lib/apt/lists/*
+
+# Create and activate virtual environment
+RUN python -m venv /opt/venv
+ENV PATH="/opt/venv/bin:$PATH"
+
+# Install uv as a faster alternative to pip
+RUN pip install --no-cache-dir --upgrade pip && \
+    pip install --no-cache-dir uv && \
+    rm -rf /root/.cache/pip/*
+
+# Copy requirements first for better caching
+COPY requirements.txt .
+
+# Install dependencies into the virtual environment
+RUN --mount=type=cache,target=/root/.cache/uv \
+    uv pip install -r requirements.txt
+
+# Copy application code
+COPY . .
+
+# Stage 2: Runtime stage
+FROM python:3.12-slim AS runtime
+
+WORKDIR /app
+
+# Install only the necessary runtime dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    libpq5 \
+    curl \
+    && rm -rf /var/lib/apt/lists/*
+
+# Create non-root user for running the application
+RUN useradd -m appuser
+
+# Copy virtual environment from builder stage
+COPY --from=builder /opt/venv /opt/venv
+ENV PATH="/opt/venv/bin:$PATH"
+
+# Copy application code
+COPY --from=builder /build /app
+
+# Set environment variables
+ENV PYTHONUNBUFFERED=1 \
+    PYTHONDONTWRITEBYTECODE=1 \
+    APP_ENV=production \
+    PORT=5000 \
+    FLASK_APP=app.py
+
+# Switch to non-root user
+USER appuser
+
+# Create directory for any app-generated files with proper permissions
+RUN mkdir -p /app/data /app/logs
+VOLUME ["/app/data", "/app/logs"]
+
+# Expose the API port
+EXPOSE ${PORT}
+
+# Health check to enable orchestration
+HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
+    CMD curl -f http://localhost:${PORT}/health || exit 1
+
+# Start the application with proper signal handling
+CMD ["sh", "-c", "exec flask run --host=0.0.0.0 --port ${PORT}"]
+```
+
+3. MULTI-SERVICE DOCKER COMPOSE PATTERN:
 ```yaml
 services:
   # Database service
@@ -257,7 +355,7 @@ volumes:
     name: ${VOLUME_PREFIX:-app}_postgres_data
 ```
 
-3. NODE.JS APPLICATION PATTERN:
+4. NODE.JS APPLICATION PATTERN:
 ```dockerfile
 # Stage 1: Build dependencies
 FROM node:18-alpine AS deps
