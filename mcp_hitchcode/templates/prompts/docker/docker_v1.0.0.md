@@ -96,313 +96,39 @@ REMINDER: ALL STEPS IN THIS SECTION MUST BE PERFORMED IN SEQUENCE - NO EXCEPTION
 </implementation-principles>
 
 <docker-patterns>
-1. PYTHON APPLICATION PATTERN (FASTAPI):
-```dockerfile
-# syntax=docker/dockerfile:1.4
-# Stage 1: Builder stage
-FROM python:3.12-slim AS builder
+YOU MUST SELECT AND ADAPT APPROPRIATE PATTERNS BASED ON THE PROJECT REQUIREMENTS:
 
-WORKDIR /build
+1. PYTHON APPLICATION PATTERNS:
+   - FastAPI/Django/Flask applications with ASGI/WSGI servers
+   - Data processing applications with appropriate dependencies
+   - Machine learning applications with GPU support when needed
+   - CLI applications packaged for distribution
 
-# Install build dependencies
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    build-essential \
-    curl \
-    && rm -rf /var/lib/apt/lists/*
+2. JAVASCRIPT/TYPESCRIPT APPLICATION PATTERNS:
+   - Node.js backend services with proper signal handling
+   - React/Vue/Angular frontend applications with optimized builds
+   - Full-stack applications with separate frontend/backend containers
+   - Serverless function containers for cloud deployment
 
-# Create and activate virtual environment
-RUN python -m venv /opt/venv
-ENV PATH="/opt/venv/bin:$PATH"
+3. DATABASE PATTERNS:
+   - Properly configured database containers with data persistence
+   - Database migration and initialization containers
+   - Read replicas and clustering configurations
+   - Backup and restore containers
 
-# Install uv as a faster alternative to pip
-RUN pip install --no-cache-dir --upgrade pip && \
-    pip install --no-cache-dir uv && \
-    rm -rf /root/.cache/pip/*
+4. INFRASTRUCTURE PATTERNS:
+   - Reverse proxy and load balancing containers
+   - Caching layers (Redis, Memcached)
+   - Message brokers (RabbitMQ, Kafka)
+   - Monitoring and logging containers
 
-# Copy project files needed for building
-COPY pyproject.toml README.md ./
-COPY src/ ./src/
+5. DEVELOPMENT WORKFLOW PATTERNS:
+   - Development containers with hot-reloading
+   - Test containers with appropriate test runners
+   - CI/CD pipeline containers
+   - Documentation generation containers
 
-# Build the package using uv for better performance
-RUN --mount=type=cache,target=/root/.cache/uv \
-    uv pip install build && \
-    python -m build --wheel . && \
-    mkdir -p /wheels && \
-    cp dist/*.whl /wheels/
-
-# Stage 2: Runtime stage
-FROM python:3.12-slim AS runtime
-
-WORKDIR /app
-
-# Install only the necessary runtime dependencies
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    libpq5 \
-    curl \
-    && rm -rf /var/lib/apt/lists/*
-
-# Create non-root user for running the application
-RUN useradd -m appuser
-
-# Copy virtual environment from builder stage
-COPY --from=builder /opt/venv /opt/venv
-ENV PATH="/opt/venv/bin:$PATH"
-
-# Copy the built wheel
-COPY --from=builder /wheels/*.whl ./
-RUN pip install --no-cache-dir ./*.whl && \
-    rm -f ./*.whl
-
-# Set environment variables
-ENV PYTHONUNBUFFERED=1 \
-    PYTHONDONTWRITEBYTECODE=1 \
-    APP_ENV=production \
-    PORT=8000
-
-# Switch to non-root user
-USER appuser
-
-# Create directory for any app-generated files with proper permissions
-RUN mkdir -p /app/data /app/logs
-VOLUME ["/app/data", "/app/logs"]
-
-# Expose the API port
-EXPOSE ${PORT}
-
-# Health check to enable orchestration
-HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
-    CMD curl -f http://localhost:${PORT}/health || exit 1
-
-# Start the application with proper signal handling
-CMD ["sh", "-c", "exec uvicorn app.main:app --host 0.0.0.0 --port ${PORT}"]
-```
-
-2. PYTHON APPLICATION PATTERN (FLASK/GENERAL):
-```dockerfile
-# syntax=docker/dockerfile:1.4
-# Stage 1: Builder stage
-FROM python:3.12-slim AS builder
-
-WORKDIR /build
-
-# Install build dependencies
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    build-essential \
-    && rm -rf /var/lib/apt/lists/*
-
-# Create and activate virtual environment
-RUN python -m venv /opt/venv
-ENV PATH="/opt/venv/bin:$PATH"
-
-# Install uv as a faster alternative to pip
-RUN pip install --no-cache-dir --upgrade pip && \
-    pip install --no-cache-dir uv && \
-    rm -rf /root/.cache/pip/*
-
-# Copy requirements first for better caching
-COPY requirements.txt .
-
-# Install dependencies into the virtual environment
-RUN --mount=type=cache,target=/root/.cache/uv \
-    uv pip install -r requirements.txt
-
-# Copy application code
-COPY . .
-
-# Stage 2: Runtime stage
-FROM python:3.12-slim AS runtime
-
-WORKDIR /app
-
-# Install only the necessary runtime dependencies
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    libpq5 \
-    curl \
-    && rm -rf /var/lib/apt/lists/*
-
-# Create non-root user for running the application
-RUN useradd -m appuser
-
-# Copy virtual environment from builder stage
-COPY --from=builder /opt/venv /opt/venv
-ENV PATH="/opt/venv/bin:$PATH"
-
-# Copy application code
-COPY --from=builder /build /app
-
-# Set environment variables
-ENV PYTHONUNBUFFERED=1 \
-    PYTHONDONTWRITEBYTECODE=1 \
-    APP_ENV=production \
-    PORT=5000 \
-    FLASK_APP=app.py
-
-# Switch to non-root user
-USER appuser
-
-# Create directory for any app-generated files with proper permissions
-RUN mkdir -p /app/data /app/logs
-VOLUME ["/app/data", "/app/logs"]
-
-# Expose the API port
-EXPOSE ${PORT}
-
-# Health check to enable orchestration
-HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
-    CMD curl -f http://localhost:${PORT}/health || exit 1
-
-# Start the application with proper signal handling
-CMD ["sh", "-c", "exec flask run --host=0.0.0.0 --port ${PORT}"]
-```
-
-3. MULTI-SERVICE DOCKER COMPOSE PATTERN:
-```yaml
-services:
-  # Database service
-  postgres:
-    image: postgres:15-alpine
-    container_name: ${PROJECT_NAME:-app}_postgres
-    environment:
-      POSTGRES_USER: ${POSTGRES_USER:-postgres}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
-      POSTGRES_DB: ${POSTGRES_DB:-postgres}
-    ports:
-      - "${POSTGRES_PORT:-5432}:5432"
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-      - ./docker/postgres/init:/docker-entrypoint-initdb.d
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
-      interval: 5s
-      timeout: 5s
-      retries: 5
-    networks:
-      - app_network
-    restart: unless-stopped
-    deploy:
-      resources:
-        limits:
-          cpus: '1'
-          memory: 1G
-
-  # API service
-  api:
-    build:
-      context: .
-      dockerfile: docker/api.Dockerfile
-      args:
-        - BUILD_ENV=${BUILD_ENV:-production}
-    container_name: ${PROJECT_NAME:-app}_api
-    depends_on:
-      postgres:
-        condition: service_healthy
-    environment:
-      APP_ENV: ${APP_ENV:-production}
-      DATABASE_URL: ${DATABASE_URL:-postgresql://postgres:postgres@postgres:5432/postgres}
-      LOG_LEVEL: ${LOG_LEVEL:-info}
-      PORT: ${API_PORT:-8000}
-    ports:
-      - "${API_PORT:-8000}:${API_PORT:-8000}"
-    volumes:
-      # Mount source in development only
-      - ${DEV_MOUNT:-/dev/null}:/app/src
-    networks:
-      - app_network
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:${API_PORT:-8000}/health"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 10s
-    restart: unless-stopped
-    deploy:
-      replicas: ${API_REPLICAS:-1}
-      resources:
-        limits:
-          cpus: '0.5'
-          memory: 512M
-
-  # Web service
-  web:
-    build:
-      context: .
-      dockerfile: docker/web.Dockerfile
-    container_name: ${PROJECT_NAME:-app}_web
-    depends_on:
-      api:
-        condition: service_healthy
-    environment:
-      API_URL: ${API_URL:-http://api:8000}
-      PORT: ${WEB_PORT:-3000}
-    ports:
-      - "${WEB_PORT:-3000}:${WEB_PORT:-3000}"
-    networks:
-      - app_network
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:${WEB_PORT:-3000}/health"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-    restart: unless-stopped
-
-networks:
-  app_network:
-    driver: bridge
-    name: ${NETWORK_NAME:-app_network}
-
-volumes:
-  postgres_data:
-    name: ${VOLUME_PREFIX:-app}_postgres_data
-```
-
-4. NODE.JS APPLICATION PATTERN:
-```dockerfile
-# Stage 1: Build dependencies
-FROM node:18-alpine AS deps
-WORKDIR /app
-
-# Install dependencies using package-lock.json for consistent installs
-COPY package.json package-lock.json ./
-RUN npm ci --only=production
-
-# Stage 2: Build application
-FROM node:18-alpine AS builder
-WORKDIR /app
-
-# Copy dependencies from previous stage
-COPY --from=deps /app/node_modules ./node_modules
-COPY . .
-
-# Build the application
-RUN npm run build
-
-# Stage 3: Runtime
-FROM node:18-alpine AS runtime
-WORKDIR /app
-
-# Set to production environment
-ENV NODE_ENV production
-
-# Create non-root user
-RUN addgroup --system --gid 1001 nodejs && \
-    adduser --system --uid 1001 nodeuser
-
-# Copy only necessary files from builder
-COPY --from=builder --chown=nodeuser:nodejs /app/package.json ./
-COPY --from=builder --chown=nodeuser:nodejs /app/dist ./dist
-COPY --from=deps --chown=nodeuser:nodejs /app/node_modules ./node_modules
-
-# Use non-root user
-USER nodeuser
-
-# Expose port and define healthcheck
-EXPOSE 3000
-HEALTHCHECK --interval=30s --timeout=5s --start-period=5s --retries=3 \
-    CMD node -e "require('http').request('http://localhost:3000/health', { timeout: 2000 }, res => process.exit(res.statusCode === 200 ? 0 : 1)).on('error', () => process.exit(1)).end()"
-
-# Command with proper signal handling
-CMD ["node", "dist/main"]
-```
+YOU MUST IMPLEMENT THESE PATTERNS USING BEST PRACTICES FOR EACH TECHNOLOGY STACK, ADAPTING TO THE SPECIFIC PROJECT REQUIREMENTS.
 </docker-patterns>
 
 <artifact-management>
@@ -726,4 +452,146 @@ VIOLATION WARNING: THESE GATES ARE ABSOLUTE AND CANNOT BE BYPASSED UNDER ANY CIR
    - Tag images with git commit hashes for traceability
    - Design container stacks for seamless scaling
    - Implement Blue/Green or Canary deployment strategies
-</docker-best-practices> 
+
+9. LANGUAGE-SPECIFIC OPTIMIZATIONS:
+   - Python: Use virtual environments, uv for faster package management, and proper PYTHONUNBUFFERED settings
+   - Node.js: Implement proper signal handling, use npm ci for reproducible builds, and optimize node_modules
+   - Java: Use JLink for smaller JRE images, optimize JVM settings, and implement proper memory limits
+   - Go: Leverage multi-stage builds with scratch/distroless images for minimal runtime containers
+   - Ruby: Use Bundler's deployment mode, optimize gem installation, and configure proper concurrency
+
+10. DEVELOPMENT WORKFLOW:
+    - Configure hot-reloading for development environments
+    - Implement debugging capabilities with appropriate port exposures
+    - Create consistent development environments across team members
+    - Document all development workflows and container interactions
+    - Implement proper test containers with appropriate isolation
+</docker-best-practices>
+
+<template-examples>
+YOU MUST ADAPT THESE EXAMPLES TO THE SPECIFIC PROJECT REQUIREMENTS:
+
+1. PYTHON DOCKERFILE TEMPLATE:
+```
+# syntax=docker/dockerfile:1.4
+
+# Stage 1: Builder
+FROM python:3.12-slim AS builder
+
+WORKDIR /build
+
+# Install build dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential \
+    curl \
+    && rm -rf /var/lib/apt/lists/*
+
+# Create virtual environment
+RUN python -m venv /opt/venv
+ENV PATH="/opt/venv/bin:$PATH"
+
+# Install dependencies
+COPY requirements.txt .
+RUN --mount=type=cache,target=/root/.cache/pip \
+    pip install --upgrade pip && \
+    pip install -r requirements.txt
+
+# Copy and build application
+COPY . .
+RUN pip install -e .
+
+# Stage 2: Runtime
+FROM python:3.12-slim AS runtime
+
+WORKDIR /app
+
+# Runtime dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    curl \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copy virtual environment
+COPY --from=builder /opt/venv /opt/venv
+ENV PATH="/opt/venv/bin:$PATH"
+
+# Copy application
+COPY --from=builder /build /app
+
+# Environment variables
+ENV PYTHONUNBUFFERED=1 \
+    PYTHONDONTWRITEBYTECODE=1
+
+# Create non-root user
+RUN useradd -m appuser
+USER appuser
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
+    CMD curl -f http://localhost:${PORT:-8000}/health || exit 1
+
+# Expose port
+EXPOSE ${PORT:-8000}
+
+# Start application
+CMD ["python", "-m", "app"]
+```
+
+2. DOCKER COMPOSE TEMPLATE:
+```yaml
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        - BUILD_ENV=${BUILD_ENV:-production}
+    environment:
+      - PORT=${PORT:-8000}
+      - DATABASE_URL=${DATABASE_URL:-postgresql://postgres:postgres@db:5432/postgres}
+    ports:
+      - "${PORT:-8000}:${PORT:-8000}"
+    depends_on:
+      db:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:${PORT:-8000}/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    restart: unless-stopped
+    networks:
+      - app_network
+    volumes:
+      - app_data:/app/data
+
+  db:
+    image: postgres:15-alpine
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER:-postgres}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-postgres}
+      - POSTGRES_DB=${POSTGRES_DB:-postgres}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - app_network
+    restart: unless-stopped
+
+networks:
+  app_network:
+    driver: bridge
+
+volumes:
+  app_data:
+  postgres_data:
+```
+
+YOU MUST ADAPT THESE TEMPLATES TO THE SPECIFIC PROJECT REQUIREMENTS, ADDING OR REMOVING SERVICES AS NEEDED.
+</template-examples> 
